@@ -1,8 +1,8 @@
 {
-  "name": "kali-linux-portfolio",
-  "version": "2.0.0",
+  "name": "motofolio",
+  "version": "2.1.0",
   "private": true,
-  "homepage": "https://github.com/x3rcyb/",
+  "homepage": "https://github.com/Momin-786/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

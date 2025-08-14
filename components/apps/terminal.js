@@ -876,12 +876,13 @@ Portfolio URL: <span class="text-blue-400 underline cursor-pointer" onclick="win
         : currentPath.replace("/home/momin", "~");
     return `${user}@${host}:${dir}$`;
   };
+  
   return (
-    <div className="w-full h-full bg-black/80 backdrop-blur-sm text-green-400 font-mono text-sm overflow-hidden rounded-lg border border-green-500/30 shadow-2xl">
+    <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm overflow-hidden">
       {/* Terminal Body */}
       <div
         ref={terminalRef}
-        className="p-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-green-500/50 scrollbar-track-transparent"
+        className="w-full h-full p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-green-500/50 scrollbar-track-transparent"
       >
         {/* Welcome Message */}
         <div className="mb-4 text-cyan-400">

@@ -39,11 +39,11 @@ export function Settings(props) {
             type: "image",
             name: "Motivational Quote"
         },
-        "wall-2": {
-            src: "./images/wallpapers/wallpaper2.jpg",
-            type: "image",
-            name: "Earth View"
-        },
+"wall-2": {
+    src: "https://picsum.photos/1920/1080?random=1",
+    type: "image",
+    name: "Random"
+},
         "wall-3": {
             src: "./images/wallpapers/wallpaper3.jpg",
             type: "image",
@@ -118,21 +118,17 @@ export function Settings(props) {
     };
 
     return (
-        <div 
-            className="w-full flex-col flex-grow z-20 max-h-full overflow-y-auto windowMainScreen select-none"
-            style={{
-                backgroundColor: '#2e3440', // Nord0
-                color: '#d8dee9', // Nord4
-                fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-            }}
-        >
+         <div 
+        className="w-full flex-col flex-grow z-20 max-h-full overflow-y-auto windowMainScreen select-none bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900"
+        style={{
+            color: '#d8dee9', // Keeping text color light for contrast
+            fontFamily: '"Fira Code", "JetBrains Mono", monospace'
+        }}
+    >
             {/* Header Section */}
             <div 
-                className="px-6 py-4 border-b"
-                style={{
-                    borderColor: '#3b4252', // Nord1
-                    backgroundColor: '#3b4252' // Nord1
-                }}
+                className="px-6 py-4 border-b  bg-gray-900/95 backdrop-blur-md border-gray-700/50"
+               
             >
                 <h2 
                     className="text-xl font-medium"

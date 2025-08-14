@@ -533,7 +533,7 @@ export class WindowMainScreen extends Component {
                         : 'rgba(55, 65, 81, 0.8)',
                     backdropFilter: 'blur(10px)',
                     transition: 'background-color 3s ease',
-                    minHeight: '0', // Important for flex scrolling
+                    minHeight: '0',
                     scrollbarWidth: 'thin',
                     scrollbarColor: 'rgba(75, 85, 99, 0.8) transparent'
                 }}

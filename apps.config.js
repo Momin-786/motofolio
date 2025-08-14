@@ -4,6 +4,9 @@ import { displaySettings } from './components/apps/settings';
 import { displayChrome } from './components/apps/chrome';
 import { displayGedit } from './components/apps/gedit';
 import { displayTerminalCalc } from './components/apps/calc';
+import { displayProjects } from './components/apps/projects';
+import { displaySkills } from './components/apps/skills';
+import { displayContact } from './components/apps/contact';
 
 const apps = [
     {
@@ -14,6 +17,33 @@ const apps = [
         favourite: true,
         desktop_shortcut: true,
         screen: displayChrome,
+    },
+     {
+        id: "projects",
+        title: "Portfolio Projects",
+        icon: './themes/Yaru/apps/projects.png',
+        disabled: false,
+        favourite: true,
+        desktop_shortcut: true,
+        screen: displayProjects,
+    },
+    {
+        id: "skills",
+        title: "My Skills",
+        icon: './themes/Yaru/apps/skills.png',
+        disabled: false,
+        favourite: true,
+        desktop_shortcut: true,
+        screen: displaySkills,
+    },
+      {
+        id: "contacts",
+        title: "Contact Me",
+        icon: './themes/Yaru/apps/contacts.png',
+        disabled: false,
+        favourite: true,
+        desktop_shortcut: true,
+        screen: displayContact,
     },
     {
         id: "calc",
@@ -28,7 +58,7 @@ const apps = [
     {
         id: "terminal",
         title: "Terminal",
-        icon: './themes/Yaru/apps/kali-terminal.png',
+        icon: './themes/Yaru/apps/terminal.png',
         disabled: false,
         favourite: true,
         desktop_shortcut: false,

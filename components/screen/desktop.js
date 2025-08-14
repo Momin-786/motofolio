@@ -304,7 +304,7 @@ renderGlassyTaskbar = () => {
 };
 
   renderGlassyTaskbarApps = () => {
-  const essentialApps = ["terminal", "chrome", "vscode", "settings"];
+  const essentialApps = ["terminal", "chrome", "projects","skills","contacts", "settings"];
 
   let taskbarApps = [];
   apps.forEach((app) => {
@@ -758,8 +758,8 @@ renderGlassyTaskbar = () => {
           hasMinimised: this.hasMinimised,
           minimized: this.state.minimized_windows[app.id],
           changeBackgroundImage: this.props.changeBackgroundImage,
-          changeBackgroundOpacity: this.changeBackgroundOpacity, // Add this
-          backgroundOpacity: this.state.backgroundOpacity, // Add this
+          changeBackgroundOpacity: this.changeBackgroundOpacity, 
+          backgroundOpacity: this.state.backgroundOpacity, 
           bg_image_name: this.props.bg_image_name,
           windowIndex: windowIndex >= 0 ? windowIndex : 0,
           onMaximize: this.handleMaximizeChange,
@@ -778,11 +778,11 @@ renderGlassyTaskbar = () => {
       action: `Opened ${objId} window`,
     });
 
-    // if the app is disabled
+    
     if (this.state.disabled_apps[objId]) return;
 
     if (this.state.minimized_windows[objId]) {
-      // focus this app's window
+      
       this.focus(objId);
 
       // set window's last position
