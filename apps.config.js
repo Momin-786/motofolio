@@ -7,6 +7,7 @@ import { displayTerminalCalc } from './components/apps/calc';
 import { displayProjects } from './components/apps/projects';
 import { displaySkills } from './components/apps/skills';
 import { displayContact } from './components/apps/contact';
+import { displayAbout } from './components/apps/about';
 
 const apps = [
     {
@@ -26,6 +27,15 @@ const apps = [
         favourite: true,
         desktop_shortcut: true,
         screen: displayProjects,
+    },
+      {
+        id: "about",
+        title: "Who am i",
+        icon: './themes/Yaru/apps/about.png',
+        disabled: false,
+        favourite: true,
+        desktop_shortcut: true,
+        screen: displayAbout,
     },
     {
         id: "skills",
@@ -67,7 +77,7 @@ const apps = [
     {
         id: "settings",
         title: "Settings",
-        icon: './themes/Yaru/apps/gnome-control-center.png',
+        icon: './themes/Yaru/apps/settings.png',
         disabled: false,
         favourite: true,
         desktop_shortcut: false,

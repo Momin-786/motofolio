@@ -304,7 +304,7 @@ renderGlassyTaskbar = () => {
 };
 
   renderGlassyTaskbarApps = () => {
-  const essentialApps = ["terminal", "chrome", "projects","skills","contacts", "settings"];
+  const essentialApps = ["terminal", "chrome", "projects","skills","contacts","about", "settings"];
 
   let taskbarApps = [];
   apps.forEach((app) => {
@@ -466,9 +466,9 @@ renderGlassyTaskbar = () => {
       activeWindows.push(
         <div
           key="no-windows"
-          className="text-gray-500 text-xs font-mono italic"
+          className="text-white-500 text-xs font-mono"
         >
-          No active windows
+          Home
         </div>
       );
     }

@@ -23,7 +23,7 @@ export default class Ubuntu extends Component {
 	setTimeOutBootScreen = () => {
 		setTimeout(() => {
 			this.setState({ booting_screen: false });
-		}, 6000);
+		}, 8000); // Increased from 6000ms to 8000ms (8 seconds)
 	};
 
 	getLocalData = () => {
@@ -119,8 +119,14 @@ export default class Ubuntu extends Component {
 					isShutDown={this.state.shutDownScreen}
 					turnOn={this.turnOn}
 				/>
-				<Navbar lockScreen={this.lockScreen} shutDown={this.shutDown} />
-				<Desktop bg_image_name={this.state.bg_image_name} changeBackgroundImage={this.changeBackgroundImage} />
+				
+				{/* Only render Navbar and Desktop when not booting and not shut down */}
+				{!this.state.booting_screen && !this.state.shutDownScreen && (
+					<>
+						<Navbar lockScreen={this.lockScreen} shutDown={this.shutDown} />
+						<Desktop bg_image_name={this.state.bg_image_name} changeBackgroundImage={this.changeBackgroundImage} />
+					</>
+				)}
 			</div>
 		);
 	}
