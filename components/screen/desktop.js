@@ -221,8 +221,7 @@ applyThemeToDOM = (themeId) => {
     // Add the new theme class
     html.classList.add(`theme-${themeId}`);
 
-    console.log(`Theme applied: theme-${themeId}`); // Debug log
-    console.log("Current classes:", html.className); // Debug log
+
   };
 
   changeTheme = (themeId) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import $ from 'jquery';
 
 export function Settings(props) {
-    console.log('Settings props:', props); // Debug log
+    
     
     // Get current opacity from props or default to 100
     const [backgroundOpacity, setBackgroundOpacity] = React.useState(
@@ -19,15 +19,15 @@ export function Settings(props) {
     // Handle opacity change
     const handleOpacityChange = (e) => {
         const newOpacity = parseInt(e.target.value);
-        console.log('Slider changed to:', newOpacity); // Debug log
+    
         setBackgroundOpacity(newOpacity);
         
         // Call parent function to update background opacity
         if (props.changeBackgroundOpacity) {
-            console.log('Calling parent changeBackgroundOpacity'); // Debug log
+           
             props.changeBackgroundOpacity(newOpacity);
         } else {
-            console.error('changeBackgroundOpacity prop is missing!'); // Debug log
+            
         }
     };
 
@@ -428,6 +428,6 @@ export function Settings(props) {
 export default Settings
 
 export const displaySettings = (props) => {
-    console.log('displaySettings received props:', props); // Debug log
+    
     return <Settings {...props}></Settings>;
 }

@@ -42,8 +42,6 @@ export default function BackgroundImage(props) {
     const currentMediaType = mediaInfo?.type || "image";
      const shouldDarken = mediaInfo?.isDarkened || false;
     useEffect(() => {
-        console.log('BackgroundImage props.img:', props.img);
-        console.log('Selected media path:', mediaPath);
         setMediaType(currentMediaType);
         setMediaLoaded(false);
     }, [props.img, currentMediaType, mediaPath, shouldDarken]);
@@ -99,11 +97,11 @@ export default function BackgroundImage(props) {
                              filter: shouldDarken ? 'brightness(0.6) contrast(1.1) saturate(0.9)' : 'none'
                         }}
                         onLoadedData={() => {
-                            console.log('✅ Video loaded successfully:', mediaPath);
+                            
                             setMediaLoaded(true);
                         }}
                         onError={(e) => {
-                            console.error('❌ Video failed to load:', mediaPath, e);
+                          
                             setMediaLoaded(false);
                         }}
                     >
@@ -119,11 +117,11 @@ export default function BackgroundImage(props) {
                         alt="Desktop Background"
                         style={imageStyles}
                         onLoad={() => {
-                            console.log('✅ Image loaded successfully:', mediaPath);
+                          
                             setMediaLoaded(true);
                         }}
                         onError={(e) => {
-                            console.error('❌ Image failed to load:', mediaPath, e);
+                      
                             setMediaLoaded(false);
                         }}
                     />
