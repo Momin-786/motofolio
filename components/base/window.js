@@ -8,6 +8,7 @@ export class Window extends Component {
     constructor() {
         super();
         this.id = null;
+        this.animationFrame = null;
         // Dynamic positioning - will be set based on window count
         this.startX = 100;
         this.startY = 80;
@@ -17,6 +18,7 @@ export class Window extends Component {
             height: 75, // Default height
             closed: false,
             maximized: false,
+            isAnimating: false, // Track animation state
             parentSize: {
                 height: 100,
                 width: 100
@@ -37,6 +39,37 @@ export class Window extends Component {
 
         // on window resize, resize boundary
         window.addEventListener('resize', this.resizeBoundries);
+
+        // Add smooth opening animation
+        this.animateWindowOpen();
+    }
+
+    componentWillUnmount() {
+        ReactGA.send({ hitType: "pageview", page: "/desktop", title: "Custom Title" });
+        
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+        }
+        
+        window.removeEventListener('resize', this.resizeBoundries);
+    }
+
+    animateWindowOpen = () => {
+        const windowElement = document.querySelector("#" + this.id);
+        if (windowElement) {
+            // Start with scaled down and transparent
+            windowElement.style.transform = `translate(${this.startX}px, ${this.startY}px) scale(0.8)`;
+            windowElement.style.opacity = '0';
+            windowElement.style.transition = 'none';
+            
+            // Force a reflow
+            windowElement.offsetHeight;
+            
+            // Apply smooth opening animation
+            windowElement.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            windowElement.style.transform = `translate(${this.startX}px, ${this.startY}px) scale(1)`;
+            windowElement.style.opacity = '1';
+        }
     }
 
     setCascadePosition = () => {
@@ -64,12 +97,6 @@ export class Window extends Component {
         if (this.startY > maxY) {
             this.startY = baseY; // Reset to base if too far down
         }
-    }
-
-    componentWillUnmount() {
-        ReactGA.send({ hitType: "pageview", page: "/desktop", title: "Custom Title" });
-
-        window.removeEventListener('resize', this.resizeBoundries);
     }
 
     setDefaultWindowDimenstion = () => {
@@ -153,6 +180,10 @@ export class Window extends Component {
     }
 
     minimizeWindow = () => {
+        if (this.state.isAnimating) return;
+        
+        this.setState({ isAnimating: true });
+        
         let posx = -310;
         if (this.state.maximized) {
             posx = -510;
@@ -161,43 +192,65 @@ export class Window extends Component {
         
         var r = document.querySelector("#" + this.id);
         if (r) {
-            // Just minimize to bottom center since no sidebar
+            // Use hardware acceleration and smooth transition
+            r.style.transition = 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            r.style.transformOrigin = 'center bottom';
             r.style.transform = `translate(${posx}px, ${window.innerHeight - 100}px) scale(0.2)`;
-            if (this.props.hasMinimised) {
-                this.props.hasMinimised(this.id);
-            }
+            r.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                this.setState({ isAnimating: false });
+                if (this.props.hasMinimised) {
+                    this.props.hasMinimised(this.id);
+                }
+            }, 350);
         }
     }
 
     restoreWindow = () => {
+        if (this.state.isAnimating) return;
+        
+        this.setState({ isAnimating: true });
+        
         var r = document.querySelector("#" + this.id);
         if (r) {
             this.setDefaultWindowDimenstion();
             // get previous position
             let posx = r.style.getPropertyValue("--window-transform-x") || "80px";
-            let posy = r.style.getPropertyValue("--window-transform-y") || "120px"; // Adjust for top nav
+            let posy = r.style.getPropertyValue("--window-transform-y") || "120px";
 
-            r.style.transform = `translate(${posx},${posy})`;
+            // Smooth restore animation
+            r.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            r.style.transformOrigin = 'center center';
+            r.style.transform = `translate(${posx},${posy}) scale(1)`;
+            r.style.opacity = '1';
             
             // Reset z-index to normal when restoring
             r.style.zIndex = '';
             
             setTimeout(() => {
-                this.setState({ maximized: false });
+                this.setState({ 
+                    maximized: false,
+                    isAnimating: false 
+                });
                 // Tell Desktop this window is no longer maximized
                 if (this.props.onMaximize) {
                     this.props.onMaximize(this.id, false);
                 }
-            }, 300);
+            }, 400);
         }
     }
 
     maximizeWindow = () => {
+        if (this.state.isAnimating) return;
+        
         if (this.state.maximized) {
             this.restoreWindow();
         }
         else {
+            this.setState({ isAnimating: true });
             this.focusWindow();
+            
             var r = document.querySelector("#" + this.id);
             if (r) {
                 this.setWinowsPosition();
@@ -210,18 +263,27 @@ export class Window extends Component {
                     this.props.onMaximize(this.id, true);
                 }
                 
-                // Set window to full screen with proper space for top nav and bottom taskbar
-                r.style.transform = `translate(0px, 0px)`; // Full screen from top
-                this.setState({ 
-                    maximized: true, 
-                    height: 100,  // Full height
-                    width: 100   // Full width
-                });
+                // Smooth maximize animation
+                r.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                r.style.transformOrigin = 'center center';
+                r.style.transform = `translate(0px, 0px) scale(1)`;
+                
+                setTimeout(() => {
+                    this.setState({ 
+                        maximized: true, 
+                        height: 100,  // Full height
+                        width: 100,   // Full width
+                        isAnimating: false
+                    });
+                }, 400);
             }
         }
     }
 
     closeWindow = () => {
+        if (this.state.isAnimating) return;
+        
+        this.setState({ isAnimating: true });
         this.setWinowsPosition();
         
         // Tell Desktop this window is no longer maximized (in case it was)
@@ -229,9 +291,19 @@ export class Window extends Component {
             this.props.onMaximize(this.id, false);
         }
         
+        const windowElement = document.querySelector("#" + this.id);
+        if (windowElement) {
+            // Smooth close animation - scale down and fade out
+            windowElement.style.transition = 'all 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53)';
+            windowElement.style.transformOrigin = 'center center';
+            windowElement.style.transform = windowElement.style.transform.replace(/scale\([^)]*\)/, '') + ' scale(0.8)';
+            windowElement.style.opacity = '0';
+            windowElement.style.filter = 'blur(2px)';
+        }
+        
         this.setState({ closed: true }, () => {
-            // No more sidebar hiding needed
             setTimeout(() => {
+                this.setState({ isAnimating: false });
                 this.props.closed(this.id)
             }, 300) // after 300ms this window will be unmounted from parent (Desktop)
         });
@@ -250,7 +322,7 @@ export class Window extends Component {
                 allowAnyClick={false}
                 defaultPosition={{ x: this.startX, y: this.startY }}
                 bounds={{ left: 0, top: 0, right: this.state.parentSize.width, bottom: this.state.parentSize.height }}
-                disabled={this.state.maximized}
+                disabled={this.state.maximized || this.state.isAnimating}
             >
                 <div
                     style={{
@@ -261,17 +333,29 @@ export class Window extends Component {
                         border: '2px solid var(--accent-primary)',
                         borderRadius: this.state.maximized ? '0' : '12px',
                         boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--accent-primary)/30, 0 0 20px var(--accent-glow)/40`,
-                        transition: 'all 0.3s ease',
+                        // Remove transition from inline styles to prevent conflicts
                         // Set z-index dynamically based on maximized state
-                        zIndex: this.state.maximized ? '9999' : (this.props.isFocused ? '30' : '20')
+                        zIndex: this.state.maximized ? '9999' : (this.props.isFocused ? '30' : '20'),
+                        // Use hardware acceleration
+                        willChange: this.state.isAnimating ? 'transform, opacity' : 'auto',
+                        // Prevent text selection during animations
+                        userSelect: this.state.isAnimating ? 'none' : 'auto',
+                        pointerEvents: this.state.isAnimating ? 'none' : 'auto'
                     }}
-                    className={this.state.cursorType + " " + (this.state.closed ? " closed-window " : "") + (this.state.maximized ? " maximized duration-300 rounded-none" : " rounded-xl") + (this.props.minimized ? " opacity-0 invisible duration-200 " : "") + " opened-window overflow-hidden min-w-1/4 min-h-1/4 main-window absolute flex flex-col backdrop-blur-xl"}
+                    className={`${this.state.cursorType} ${this.state.closed ? "closed-window" : ""} ${this.state.maximized ? "maximized rounded-none" : "rounded-xl"} ${this.props.minimized ? "opacity-0 invisible" : ""} opened-window overflow-hidden min-w-1/4 min-h-1/4 main-window absolute flex flex-col backdrop-blur-xl`}
                     id={this.id}
                 >
                     <WindowYBorder resize={this.handleHorizontalResize} />
                     <WindowXBorder resize={this.handleVerticleResize} />
                     <WindowTopBar title={this.props.title} />
-                    <WindowEditButtons minimize={this.minimizeWindow} maximize={this.maximizeWindow} isMaximised={this.state.maximized} close={this.closeWindow} id={this.id} />
+                    <WindowEditButtons 
+                        minimize={this.minimizeWindow} 
+                        maximize={this.maximizeWindow} 
+                        isMaximised={this.state.maximized} 
+                        close={this.closeWindow} 
+                        id={this.id}
+                        disabled={this.state.isAnimating}
+                    />
                     {(this.id === "settings"
                                         ? <Settings 
                                             changeBackgroundImage={this.props.changeBackgroundImage} 
@@ -379,23 +463,23 @@ export function WindowEditButtons(props) {
         <div className="absolute select-none right-2 top-2 flex justify-center items-center space-x-1.5 z-50">
             {/* Minimize Button */}
             <span 
-                className="bg-gray-700/40 backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 cursor-pointer group"
-                onClick={props.minimize}
+                className={`bg-gray-700/40 backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 cursor-pointer group ${props.disabled ? 'pointer-events-none opacity-50' : ''}`}
+                onClick={props.disabled ? undefined : props.minimize}
                 style={{
                     backgroundColor: 'rgba(75, 85, 99, 0.4)',
                     border: '1px solid var(--accent-primary)/30',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
                 }}
-                onMouseEnter={(e) => {
+                onMouseEnter={!props.disabled ? (e) => {
                     e.currentTarget.style.backgroundColor = 'var(--accent-primary)/20';
                     e.currentTarget.style.borderColor = 'var(--accent-primary)/60';
                     e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)/40';
-                }}
-                onMouseLeave={(e) => {
+                } : undefined}
+                onMouseLeave={!props.disabled ? (e) => {
                     e.currentTarget.style.backgroundColor = 'rgba(75, 85, 99, 0.4)';
                     e.currentTarget.style.borderColor = 'var(--accent-primary)/30';
                     e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                }}
+                } : undefined}
             >
                 <img
                     src="./themes/Yaru/window/window-minimize-symbolic.svg"
@@ -413,23 +497,23 @@ export function WindowEditButtons(props) {
                 (props.isMaximised
                     ?
                     <span 
-                        className="bg-gray-700/40 backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 cursor-pointer group"
-                        onClick={props.maximize}
+                        className={`bg-gray-700/40 backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 cursor-pointer group ${props.disabled ? 'pointer-events-none opacity-50' : ''}`}
+                        onClick={props.disabled ? undefined : props.maximize}
                         style={{
                             backgroundColor: 'rgba(75, 85, 99, 0.4)',
                             border: '1px solid var(--accent-primary)/30',
                             boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
                         }}
-                        onMouseEnter={(e) => {
+                        onMouseEnter={!props.disabled ? (e) => {
                             e.currentTarget.style.backgroundColor = 'var(--accent-primary)/20';
                             e.currentTarget.style.borderColor = 'var(--accent-primary)/60';
                             e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)/40';
-                        }}
-                        onMouseLeave={(e) => {
+                        } : undefined}
+                        onMouseLeave={!props.disabled ? (e) => {
                             e.currentTarget.style.backgroundColor = 'rgba(75, 85, 99, 0.4)';
                             e.currentTarget.style.borderColor = 'var(--accent-primary)/30';
                             e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                        }}
+                        } : undefined}
                     >
                         <img
                             src="./themes/Yaru/window/window-restore-symbolic.svg"
@@ -443,23 +527,23 @@ export function WindowEditButtons(props) {
                     </span>
                     :
                     <span 
-                        className="bg-gray-700/40 backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 cursor-pointer group"
-                        onClick={props.maximize}
+                        className={`bg-gray-700/40 backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 cursor-pointer group ${props.disabled ? 'pointer-events-none opacity-50' : ''}`}
+                        onClick={props.disabled ? undefined : props.maximize}
                         style={{
                             backgroundColor: 'rgba(75, 85, 99, 0.4)',
                             border: '1px solid var(--accent-primary)/30',
                             boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
                         }}
-                        onMouseEnter={(e) => {
+                        onMouseEnter={!props.disabled ? (e) => {
                             e.currentTarget.style.backgroundColor = 'var(--accent-primary)/20';
                             e.currentTarget.style.borderColor = 'var(--accent-primary)/60';
                             e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)/40';
-                        }}
-                        onMouseLeave={(e) => {
+                        } : undefined}
+                        onMouseLeave={!props.disabled ? (e) => {
                             e.currentTarget.style.backgroundColor = 'rgba(75, 85, 99, 0.4)';
                             e.currentTarget.style.borderColor = 'var(--accent-primary)/30';
                             e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                        }}
+                        } : undefined}
                     >
                         <img
                             src="./themes/Yaru/window/window-maximize-symbolic.svg"
@@ -478,23 +562,23 @@ export function WindowEditButtons(props) {
             <button 
                 tabIndex="-1" 
                 id={`close-${props.id}`} 
-                className="focus:outline-none cursor-pointer backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 group" 
-                onClick={props.close}
+                className={`focus:outline-none cursor-pointer backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 group ${props.disabled ? 'pointer-events-none opacity-50' : ''}`}
+                onClick={props.disabled ? undefined : props.close}
                 style={{
                     backgroundColor: 'var(--accent-primary)/80',
                     border: '1px solid var(--accent-primary)',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 1px var(--accent-primary)/30'
                 }}
-                onMouseEnter={(e) => {
+                onMouseEnter={!props.disabled ? (e) => {
                     e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
                     e.currentTarget.style.transform = 'scale(1.1)';
                     e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)/60, 0 0 20px var(--accent-primary)/40';
-                }}
-                onMouseLeave={(e) => {
+                } : undefined}
+                onMouseLeave={!props.disabled ? (e) => {
                     e.currentTarget.style.backgroundColor = 'var(--accent-primary)/80';
                     e.currentTarget.style.transform = 'scale(1)';
                     e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2), 0 0 0 1px var(--accent-primary)/30';
-                }}
+                } : undefined}
             >
                 <img
                     src="./themes/Yaru/window/window-close-symbolic.svg"

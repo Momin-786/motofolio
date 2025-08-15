@@ -36,7 +36,7 @@ const ProjectsApp = ({ onClose }) => {
       category: "ai",
       icon: Brain,
       color: "from-red-500 to-rose-500",
-      status: "Research Complete",
+      status: "Completed",
       tech: ["TensorFlow", "Python", "OpenCV", "Deep Learning"],
       description: "A deep learning-based medical image classifier for tumor detection with 94.5% accuracy rate.",
       features: [
@@ -49,7 +49,7 @@ const ProjectsApp = ({ onClose }) => {
       ],
       screenshots: ["./screenshots/brain-tumor-1.jpg"],
       demoUrl: "#",
-      githubUrl: "#",
+      githubUrl: "https://github.com/Momin-786/",
       year: "2025"
     },
     {
@@ -71,40 +71,18 @@ const ProjectsApp = ({ onClose }) => {
         "Resume upload system"
       ],
       screenshots: ["./screenshots/job-portal-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "#",
+      demoUrl: "https://job-portal-db-c42r.vercel.app/",
+      githubUrl: "https://github.com/Momin-786/JobPortalDB",
       year: "2024"
     },
     {
-      id: 3,
-      name: "Papi's Feedback App",
-      category: "web",
-      icon: MessageSquare,
-      color: "from-purple-500 to-pink-500",
-      status: "Live",
-      tech: ["MongoDB", "Express.js", "React.js", "Node.js"],
-      description: "A streamlined feedback collection tool for businesses with custom form creation and analytics dashboard.",
-      features: [
-        "Custom form creation",
-        "Real-time feedback collection",
-        "Data export capabilities",
-        "Analytics dashboard",
-        "Multi-format responses",
-        "User-friendly interface"
-      ],
-      screenshots: ["./screenshots/feedback-app-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "#",
-      year: "2025"
-    },
-    {
-      id: 4,
+        id: 3,
       name: "Weather Forecast App",
       category: "mobile",
       icon: CloudSun,
       color: "from-orange-500 to-yellow-500",
       status: "Published",
-      tech: ["PostgreSQL", "Docker", "Spring Boot", "Flutter"],
+      tech: ["PostgreSQL", "Docker", "Spring Boot", "Flutter", "Dart", "OpenWeatherMap API", "(React and Nodejs for Web)"],
       description: "A cross-platform weather tracking solution with real-time forecasts and location-based search.",
       features: [
         "Real-time weather forecasts",
@@ -116,12 +94,35 @@ const ProjectsApp = ({ onClose }) => {
         "Offline functionality"
       ],
       screenshots: ["./screenshots/weather-app-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "#",
+      demoUrl: "https://web-semester-project-brown.vercel.app/",
+      githubUrl: "https://github.com/Momin-786/weather_app_flutter",
       year: "2025"
     },
     {
-     
+       id: 4,
+      name: "Ebay",
+      category: "mobile",
+      icon: ShoppingCart,
+      color: "from-amber-500 to-orange-500",
+      status: "In Development",
+      tech: ["Flutter", "PostgreSQL","Docker", "Stripe", "Redis", "Spring Boot"],
+      description: "A full-featured e-commerce platform with payment integration and inventory management.",
+      features: [
+        "Product catalog management",
+        "Shopping cart functionality",
+        "Payment gateway integration",
+        "Order tracking system",
+        "Inventory management",
+        "Customer reviews",
+        "Admin dashboard"
+      ],
+      screenshots: ["./screenshots/ecommerce-1.jpg"],
+      demoUrl: "#",
+      githubUrl: "https://github.com/Momin-786/eShop-_Flutter_Project",
+      year: "2025"
+    
+    },
+    {
             id: 5,
       name: "Fee Submission SaaS",
       category: "saas",
@@ -139,8 +140,8 @@ const ProjectsApp = ({ onClose }) => {
         "Automated receipts generation"
       ],
       screenshots: ["./screenshots/fee-system-1.jpg", "./screenshots/fee-system-2.jpg"],
-      demoUrl: "#",
-      githubUrl: "#",
+      demoUrl: "https://fee-submission-system-saas-4a5g.vercel.app/",
+      githubUrl: "https://github.com/Momin-786/Fee_Submission_System_SAAS",
       year: "2024"
     },
     {
@@ -163,56 +164,82 @@ const ProjectsApp = ({ onClose }) => {
       ],
       screenshots: ["./screenshots/blog-app-1.jpg"],
       demoUrl: "#",
-      githubUrl: "#",
+      githubUrl: "https://github.com/Momin-786/Blog_App_Flutter",
       year: "2025"
     },
-    {
-      id: 7,
-      name: "Custom AI Solutions",
-      category: "ai",
-      icon: Bot,
-      color: "from-teal-500 to-cyan-500",
-      status: "Ongoing",
-      tech: ["Python", "TensorFlow", "OpenCV", "NLP"],
-      description: "Tailored AI models for automation and intelligent decision-making across multiple industries.",
-      features: [
-        "Predictive Analytics",
-        "Process Automation",
-        "Computer Vision",
-        "Natural Language Processing",
-        "Recommendation Systems",
-        "Anomaly Detection",
-        "Custom ML Models"
-      ],
-      industries: ["Healthcare", "E-commerce", "Finance", "Manufacturing", "Education"],
-      screenshots: ["./screenshots/ai-solutions-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "#",
-      year: "2025"
-    },
+{
+  id: 7,
+  name: "Modito - Online Code Editor",
+  category: "web",
+  icon: Code,
+  color: "from-blue-500 to-indigo-500",
+  status: "Ongoing",
+  tech: ["React", "Vite", "Monaco Editor", "Tailwind CSS", "React Toastify"],
+  description: "Lightweight in-browser code editor for real-time HTML, CSS, and JavaScript editing with live preview and project management.",
+  features: [
+    "Real-time Code Editing",
+    "File Renaming and Management",
+    "Project Saving to LocalStorage",
+    "Copy, Paste, and Reset Content",
+    "Live Code Preview",
+    "Custom Tab Colors",
+    "Toast Notifications",
+    "Clipboard API Integration",
+    "Syntax Highlighting",
+    "Custom Logo and Favicon"
+  ],
+  industries: ["Education", "Web Development", "Software Development"],
+  screenshots: ["./screenshots/modito-1.jpg"],
+  demoUrl: "https://web-code-editor-coral.vercel.app/",
+  githubUrl: "https://github.com/Momin-786/Web_Code_Edito",
+  year: "2025"
+},
     {
       id: 8,
-      name: "E-Commerce Platform",
+      name: "Papi's Feedback App",
       category: "web",
-      icon: ShoppingCart,
-      color: "from-amber-500 to-orange-500",
-      status: "In Development",
-      tech: ["Next.js", "PostgreSQL", "Stripe", "Redis"],
-      description: "A full-featured e-commerce platform with payment integration and inventory management.",
+      icon: MessageSquare,
+      color: "from-purple-500 to-pink-500",
+      status: "Live",
+      tech: ["MongoDB", "Express.js", "React.js", "Node.js"],
+      description: "A streamlined feedback collection tool for businesses with custom form creation and analytics dashboard.",
       features: [
-        "Product catalog management",
-        "Shopping cart functionality",
-        "Payment gateway integration",
-        "Order tracking system",
-        "Inventory management",
-        "Customer reviews",
-        "Admin dashboard"
+        "Custom form creation",
+        "Real-time feedback collection",
+        "Data export capabilities",
+        "Analytics dashboard",
+        "Multi-format responses",
+        "User-friendly interface"
       ],
-      screenshots: ["./screenshots/ecommerce-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "#",
+      screenshots: ["./screenshots/feedback-app-1.jpg"],
+      demoUrl: "https://papifeedback.vercel.app/",
+      githubUrl: "https://github.com/Momin-786/Feedback_Page",
       year: "2025"
-    }
+    },
+    {
+  id: 9,
+  name: "Auction Website",
+  category: "web",
+  icon: Users,
+  color: "from-purple-500 to-pink-500",
+  status: "Ongoing",
+  tech: ["React", "Firebase", "Bootstrap", "GitHub Pages"],
+  description: "Simple online auction platform with real-time bidding, hosted on GitHub Pages, using Firebase for authentication and data management.",
+  features: [
+    "Real-time Bidding",
+    "Mobile Responsive UI",
+    "Anonymous Username Login",
+    "Admin Panel for Auction Management",
+    "Detailed Item Listings with Images",
+    "Firestore Security Rules",
+    "Automatic Deployment via GitHub Pages"
+  ],
+  industries: ["Charity", "E-commerce", "Fundraising"],
+  screenshots: ["./screenshots/auction-website-1.jpg"],
+  demoUrl: "https://online-bid-system.vercel.app/",
+  githubUrl: "https://github.com/Momin-786/Online_Bid_System",
+  year: "2025"
+}
   ];
 
   const categories = [
@@ -246,6 +273,14 @@ const ProjectsApp = ({ onClose }) => {
       default:
         return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
+  };
+
+  const handleLinkClick = (url, type) => {
+    if (url === "#") {
+      alert(`${type} not available yet - Coming soon!`);
+      return;
+    }
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   useEffect(() => {
@@ -464,13 +499,21 @@ const ProjectsApp = ({ onClose }) => {
                     <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
                       <h3 className="text-lg font-semibold text-white mb-3">Links</h3>
                       <div className="space-y-2">
-                        <button className="w-full flex items-center justify-center space-x-2 p-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors text-sm">
+                        <button 
+                          onClick={() => handleLinkClick(selectedProject.demoUrl, 'Demo')}
+                          className="w-full flex items-center justify-center space-x-2 p-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors text-sm"
+                        >
                           <Play className="w-3 h-3" />
                           <span>Live Demo</span>
+                          <ExternalLink className="w-3 h-3" />
                         </button>
-                        <button className="w-full flex items-center justify-center space-x-2 p-2 bg-gray-700/50 text-gray-300 border border-gray-600/50 rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                        <button 
+                          onClick={() => handleLinkClick(selectedProject.githubUrl, 'GitHub Repository')}
+                          className="w-full flex items-center justify-center space-x-2 p-2 bg-gray-700/50 text-gray-300 border border-gray-600/50 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                        >
                           <Github className="w-3 h-3" />
                           <span>Source Code</span>
+                          <ExternalLink className="w-3 h-3" />
                         </button>
                       </div>
                     </div>

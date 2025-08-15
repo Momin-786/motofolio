@@ -302,8 +302,7 @@ renderGlassyTaskbar = () => {
     </div>
   );
 };
-
-  renderGlassyTaskbarApps = () => {
+renderGlassyTaskbarApps = () => {
   const essentialApps = ["terminal", "chrome", "projects","skills","contacts","about", "settings"];
 
   let taskbarApps = [];
@@ -332,94 +331,88 @@ renderGlassyTaskbar = () => {
               }
             }
           }}
-          className={`relative p-2 rounded-xl transition-all duration-500 ease-out transform hover:scale-110 backdrop-blur-sm group ${
-            isOpen && isFocused
-              ? "border shadow-lg"
-              : isOpen 
-                ? "border opacity-80"
-                : "bg-gray-700/10 border border-gray-600/20 hover:bg-gray-600/20 hover:border-gray-500/40"
-          }`}
-          style={
-            isOpen && isFocused
-              ? {
-                  backgroundColor: "var(--accent-light)",
-                  borderColor: "var(--accent-primary)",
-                  boxShadow: "0 8px 25px var(--accent-glow)/60, 0 0 0 1px var(--accent-primary)/30",
-                  transform: "scale(1.05)",
-                }
-              : isOpen
-                ? {
-                    backgroundColor: "var(--accent-light)/60",
-                    borderColor: "var(--accent-primary)/70",
-                    boxShadow: "0 4px 15px var(--accent-glow)/30",
-                  }
-                : {}
-          }
+          className="relative p-3 transition-all duration-300 ease-out transform group"
           onMouseEnter={(e) => {
-            if (!isOpen) {
-              e.currentTarget.style.borderColor = "var(--accent-primary)/80";
-              e.currentTarget.style.backgroundColor = "var(--accent-light)/40";
-              e.currentTarget.style.boxShadow = "0 6px 20px var(--accent-glow)/40";
-              e.currentTarget.style.transform = "scale(1.1)";
-            }
+            e.currentTarget.style.transform = "translateY(-8px) scale(1.2)";
+            e.currentTarget.querySelector('img').style.filter = "brightness(1.2) drop-shadow(0 0 15px var(--accent-primary))";
+            e.currentTarget.querySelector('.icon-glow').style.opacity = "1";
           }}
           onMouseLeave={(e) => {
-            if (!isOpen) {
-              e.currentTarget.style.borderColor = "rgba(75, 85, 99, 0.2)";
-              e.currentTarget.style.backgroundColor = "rgba(55, 65, 81, 0.1)";
-              e.currentTarget.style.boxShadow = "none";
-              e.currentTarget.style.transform = "scale(1)";
-            }
+            e.currentTarget.style.transform = isOpen && isFocused ? "translateY(-2px) scale(1.05)" : "translateY(0) scale(1)";
+            e.currentTarget.querySelector('img').style.filter = isOpen 
+              ? isFocused 
+                ? "brightness(1.1) drop-shadow(0 0 8px var(--accent-primary))" 
+                : "brightness(1.05)"
+              : "brightness(0.9)";
+            e.currentTarget.querySelector('.icon-glow').style.opacity = isOpen && isFocused ? "0.6" : "0";
+          }}
+          style={{
+            transform: isOpen && isFocused ? "translateY(-2px) scale(1.05)" : "translateY(0) scale(1)",
           }}
         >
-          {/* Enhanced icon container with glow effect */}
-          <div className="w-10 h-10 flex items-center justify-center relative">
+          {/* Icon with clean design */}
+          <div className="w-12 h-12 flex items-center justify-center relative">
             <img
-              width="40px"
-              height="40px"
+              width="48px"
+              height="48px"
               src={app.icon}
               alt={app.title}
-              className="w-full h-full object-contain transition-all duration-300 group-hover:drop-shadow-lg"
+              className="w-full h-full object-contain transition-all duration-300"
               style={{
                 filter: isOpen 
                   ? isFocused 
                     ? "brightness(1.1) drop-shadow(0 0 8px var(--accent-primary))" 
                     : "brightness(1.05)"
                   : "brightness(0.9)",
-                transition: "filter 0.3s ease, transform 0.3s ease",
+                transition: "filter 0.3s ease",
               }}
             />
             
-            {/* Enhanced glow effect for focused apps */}
-            {isOpen && isFocused && (
-              <div 
-                className="absolute inset-0 rounded-lg animate-pulse"
-                style={{
-                  background: `radial-gradient(circle, var(--accent-primary)/20 0%, transparent 70%)`,
-                  animation: "iconGlow 3s ease-in-out infinite",
-                }}
-              />
-            )}
+            {/* Theme color glow effect on hover */}
+            <div 
+              className="icon-glow absolute inset-0 rounded-full transition-all duration-300 pointer-events-none"
+              style={{
+                background: `radial-gradient(circle, var(--accent-primary)/30 0%, transparent 60%)`,
+                opacity: isOpen && isFocused ? "0.6" : "0",
+                transform: "scale(1.5)",
+              }}
+            />
           </div>
 
-          {/* Enhanced active indicator with animation */}
+          {/* Minimal active indicator */}
           {isOpen && (
             <div
               className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 transition-all duration-300"
               style={{
-                width: isFocused ? '16px' : '8px',
-                height: '3px',
-                borderRadius: '2px',
+                width: isFocused ? '20px' : '12px',
+                height: '2px',
+                borderRadius: '1px',
                 backgroundColor: "var(--accent-primary)",
-                boxShadow: `0 0 ${isFocused ? '12px' : '6px'} var(--accent-primary)/80`,
-                animation: isFocused ? "activeIndicator 2s ease-in-out infinite" : "none",
+                boxShadow: `0 0 ${isFocused ? '8px' : '4px'} var(--accent-primary)/60`,
               }}
             ></div>
           )}
 
-          {/* App tooltip on hover */}
-          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900/90 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 backdrop-blur-sm pointer-events-none whitespace-nowrap z-50">
+          {/* Enhanced tooltip with theme colors */}
+          <div 
+            className="absolute -top-14 left-1/2 transform -translate-x-1/2 px-3 py-1.5 rounded-lg text-xs font-mono opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md pointer-events-none whitespace-nowrap z-50"
+            style={{
+              backgroundColor: "var(--accent-primary)",
+              color: "white",
+              boxShadow: "0 4px 20px var(--accent-primary)/40",
+              fontFamily: "var(--font-mono)",
+            }}
+          >
             {app.title}
+            {/* Small arrow pointing down */}
+            <div 
+              className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0"
+              style={{
+                borderLeft: "4px solid transparent",
+                borderRight: "4px solid transparent",
+                borderTop: "4px solid var(--accent-primary)",
+              }}
+            />
           </div>
         </button>
       );
@@ -466,7 +459,7 @@ renderGlassyTaskbar = () => {
       activeWindows.push(
         <div
           key="no-windows"
-          className="text-white-500 text-xs font-mono"
+          className="text-white-500 text- font-mono"
         >
           Home
         </div>
