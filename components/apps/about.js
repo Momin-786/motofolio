@@ -147,65 +147,65 @@ const AboutApp = ({ onClose }) => {
   }, [onClose]);
 
   const renderOverview = () => (
-    <div className="space-y-6">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl p-6 text-white">
+    <div className="space-y-4">
+      {/* Hero Section - Ubuntu style */}
+      <div className="ubuntu-card p-4">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-              <User className="w-8 h-8" />
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-[#2D2D2D] border border-[#3D3D3D] rounded flex items-center justify-center">
+              <User className="w-6 h-6 text-[#E95420]" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">Abdul Momin</h2>
-              <p className="opacity-90">Full-Stack Developer & AI Enthusiast</p>
+              <h2 className="text-base font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Abdul Momin</h2>
+              <p className="text-xs text-[#B3B3B3]" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Full-Stack Developer & AI Enthusiast</p>
             </div>
           </div>
           
           {/* Download Resume Button */}
           <button
             onClick={() => {
-              // Create a temporary link to download the resume
               const link = document.createElement('a');
-              link.href = '/resume.pdf'; // Path to your resume file
+              link.href = '/resume.pdf';
               link.download = 'Abdul_Momin_Resume.pdf';
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-300 backdrop-blur-sm border border-white/30 hover:border-white/50"
+            className="ubuntu-button primary flex items-center gap-2 text-xs"
+            style={{ padding: '6px 12px' }}
           >
-            <Download className="w-4 h-4" />
-            <span className="text-sm font-medium">Resume</span>
+            <Download className="w-3 h-3" />
+            <span>Resume</span>
           </button>
         </div>
-        <div className="flex items-center gap-2 text-sm opacity-90">
-          <MapPin className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-xs text-[#B3B3B3]" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+          <MapPin className="w-3 h-3" />
           <span>Gujranwala, Punjab, Pakistan</span>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats Grid - Ubuntu style */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 text-center">
-            <stat.icon className={`w-6 h-6 ${stat.color} mx-auto mb-2`} />
-            <div className={`text-2xl font-bold text-white transition-all duration-1000 ${
+          <div key={index} className="ubuntu-card p-3 text-center">
+            <stat.icon className={`w-5 h-5 ${stat.color === 'text-blue-400' ? 'text-[#E95420]' : stat.color} mx-auto mb-2`} />
+            <div className={`text-lg font-medium text-white transition-all duration-1000 ${
               animateStats ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}>
+            }`} style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
               {stat.value}
             </div>
-            <div className="text-xs text-gray-400">{stat.label}</div>
+            <div className="text-xs text-[#808080]" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{stat.label}</div>
           </div>
         ))}
       </div>
 
-      {/* About Text */}
-      <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <User className="w-5 h-5 text-blue-400" />
+      {/* About Text - Ubuntu style */}
+      <div className="ubuntu-card p-4">
+        <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+          <User className="w-4 h-4 text-[#E95420]" />
           About Me
         </h3>
-        <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
+        <div className="space-y-3 text-[#B3B3B3] text-xs leading-relaxed" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
           <p>
             Hello, I'm Momin — a full-stack developer and AI enthusiast with a Bachelor's degree in 
             Software Engineering from COMSATS University Abbottabad in 2026, where I graduated with a 4.0 CGPA.
@@ -397,41 +397,42 @@ const AboutApp = ({ onClose }) => {
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 font-mono overflow-hidden">
+    <div className="w-full h-full bg-[#1E1E1E] font-['Ubuntu_Mono',monospace] overflow-hidden ubuntu-scrollbar">
       <div className="w-full h-full flex flex-col">
         
-        {/* Header */}
-        <div className="flex-shrink-0 bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 p-3">
+        {/* Ubuntu-style Header */}
+        <div className="flex-shrink-0 bg-[#2D2D2D] border-b border-[#3D3D3D] p-3">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-lg font-bold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
-              About Abdul Momin
+            <h1 className="text-base font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+              About
             </h1>
             {onClose && (
               <button
                 onClick={onClose}
-                className="p-1.5 hover:bg-gray-700/50 rounded-lg transition-colors"
+                className="ubuntu-button p-1.5"
+                style={{ padding: '4px 8px', minWidth: 'auto' }}
               >
-                <X className="w-4 h-4 text-gray-400" />
+                <X className="w-4 h-4 text-[#B3B3B3]" />
               </button>
             )}
           </div>
 
-          {/* Section Tabs */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2">
+          {/* Section Tabs - Ubuntu style - Responsive */}
+          <div className="flex gap-1 md:gap-2 overflow-x-auto ubuntu-scrollbar pb-2">
             {Object.entries(sections).map(([sectionKey, section]) => {
               const IconComponent = section.icon;
               return (
                 <button
                   key={sectionKey}
                   onClick={() => setActiveSection(sectionKey)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all whitespace-nowrap flex-shrink-0 ${
-                    activeSection === sectionKey
-                      ? `bg-gradient-to-r ${section.color} text-white shadow-lg`
-                      : "bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 hover:text-gray-300"
+                  className={`ubuntu-tab whitespace-nowrap flex-shrink-0 ${
+                    activeSection === sectionKey ? 'active' : ''
                   }`}
+                  style={{ padding: '4px 8px', fontSize: '11px' }}
                 >
-                  <IconComponent className="w-4 h-4" />
-                  <span className="text-sm font-medium">{section.name}</span>
+                  <IconComponent className="w-3 h-3 inline mr-1" />
+                  <span className="hidden sm:inline">{section.name}</span>
+                  <span className="sm:hidden">{section.name.split(' ')[0]}</span>
                 </button>
               );
             })}
@@ -439,7 +440,7 @@ const AboutApp = ({ onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-[#1E1E1E] ubuntu-scrollbar">
           {renderContent()}
         </div>
       </div>

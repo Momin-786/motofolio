@@ -124,7 +124,13 @@ export default class Ubuntu extends Component {
 				{!this.state.booting_screen && !this.state.shutDownScreen && (
 					<>
 						<Navbar lockScreen={this.lockScreen} shutDown={this.shutDown} />
-						<Desktop bg_image_name={this.state.bg_image_name} changeBackgroundImage={this.changeBackgroundImage} />
+						<Desktop 
+							bg_image_name={this.state.bg_image_name} 
+							changeBackgroundImage={this.changeBackgroundImage}
+							projectsData={this.props.projectsData}
+							skillsData={this.props.skillsData}
+							aboutData={this.props.aboutData}
+						/>
 					</>
 				)}
 			</div>

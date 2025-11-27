@@ -22,14 +22,34 @@ import {
   Filter
 } from "lucide-react";
 
-const ProjectsApp = ({ onClose }) => {
+const ProjectsApp = ({ onClose, projectsData = [] }) => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [projects, setProjects] = useState(projectsData);
 
-  // Project data with enhanced information
-  const projects = [
+  // Use provided data or fetch from API
+  useEffect(() => {
+    if (projectsData && projectsData.length > 0) {
+      setProjects(projectsData);
+    } else {
+      // Fallback to hardcoded data if API not available
+      fetchProjects();
+    }
+  }, [projectsData]);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch('/api/projects');
+      const data = await response.json();
+      if (data.success) {
+        setProjects(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      // Fallback to hardcoded data
+      setProjects([
     {
    id: 1,
       name: "Brain Tumor AI Classifier",
@@ -238,9 +258,11 @@ const ProjectsApp = ({ onClose }) => {
   screenshots: ["./screenshots/auction-website-1.jpg"],
   demoUrl: "https://online-bid-system.vercel.app/",
   githubUrl: "https://github.com/Momin-786/Online_Bid_System",
-  year: "2025"
+      year: "2025"
 }
-  ];
+      ]);
+    }
+  };
 
   const categories = [
     { id: "all", name: "All", count: projects.length },
@@ -249,6 +271,11 @@ const ProjectsApp = ({ onClose }) => {
     { id: "ai", name: "AI/ML", count: projects.filter(p => p.category === "ai").length },
     { id: "saas", name: "SaaS", count: projects.filter(p => p.category === "saas").length }
   ];
+
+  // Map icon names to components
+  const iconMap = {
+    Brain, Users, CloudSun, ShoppingCart, Database, FileText, Code, MessageSquare
+  };
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -298,53 +325,54 @@ const ProjectsApp = ({ onClose }) => {
   }, [selectedProject, onClose]);
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 font-mono overflow-hidden">
+    <div className="w-full h-full bg-[#1E1E1E] font-['Ubuntu_Mono',monospace] overflow-hidden ubuntu-scrollbar">
       <div className="w-full h-full flex flex-col">
         {!selectedProject ? (
           <>
-            {/* Controls Bar - Compact for window */}
-            <div className="flex-shrink-0 bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 p-3">
+            {/* Ubuntu-style Header */}
+            <div className="flex-shrink-0 bg-[#2D2D2D] border-b border-[#3D3D3D] p-3">
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <h1 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                    My Projects
+                  <h1 className="text-base font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                    Projects
                   </h1>
                   {onClose && (
                     <button
                       onClick={onClose}
-                      className="p-1.5 hover:bg-gray-700/50 rounded-lg transition-colors"
+                      className="ubuntu-button p-1.5"
+                      style={{ padding: '4px 8px', minWidth: 'auto' }}
                     >
-                      <X className="w-4 h-4 text-gray-400" />
+                      <X className="w-4 h-4 text-[#B3B3B3]" />
                     </button>
                   )}
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-2">
-                  {/* Search Bar */}
+                <div className="flex flex-col gap-2">
+                  {/* Search Bar - Ubuntu style */}
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 text-[#808080]" />
                     <input
                       type="text"
                       placeholder="Search projects..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white text-sm placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
+                      className="ubuntu-input pl-8 md:pl-10 text-xs md:text-sm"
                     />
                   </div>
 
-                  {/* Category Filters - Horizontal scroll */}
-                  <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none">
+                  {/* Category Filters - Ubuntu tabs style - Scrollable on mobile */}
+                  <div className="flex items-center space-x-1 md:space-x-2 overflow-x-auto ubuntu-scrollbar">
                     {categories.map(category => (
                       <button
                         key={category.id}
                         onClick={() => setFilterCategory(category.id)}
-                        className={`px-3 py-2 rounded-lg text-xs whitespace-nowrap transition-all flex-shrink-0 ${
-                          filterCategory === category.id
-                            ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                            : "hover:bg-gray-700/50 text-gray-300 border border-transparent"
+                        className={`ubuntu-tab whitespace-nowrap flex-shrink-0 ${
+                          filterCategory === category.id ? 'active' : ''
                         }`}
+                        style={{ padding: '4px 8px', fontSize: '11px' }}
                       >
-                        {category.name} ({category.count})
+                        <span className="hidden sm:inline">{category.name} </span>
+                        <span>({category.count})</span>
                       </button>
                     ))}
                   </div>
@@ -352,68 +380,52 @@ const ProjectsApp = ({ onClose }) => {
               </div>
             </div>
 
-            {/* Projects Grid - Modified for single row layout */}
-            <div className="flex-1 overflow-auto p-3">
+            {/* Projects List - Nautilus-style */}
+            <div className="flex-1 overflow-auto bg-[#1E1E1E]">
               {filteredProjects.length > 0 ? (
-                <div className="space-y-3">
+                <div>
                   {filteredProjects.map(project => {
-                    const IconComponent = project.icon;
+                    // Handle icon - can be component or string
+                    const IconComponent = typeof project.icon === 'string' 
+                      ? iconMap[project.icon] || Code 
+                      : project.icon || Code;
                     return (
                       <div
                         key={project.id}
                         onClick={() => setSelectedProject(project)}
-                        className="group cursor-pointer bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 hover:border-gray-600/50 hover:bg-gray-800/60 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                        className="ubuntu-list-item cursor-pointer p-2 md:p-3"
                       >
-                        <div className="flex items-center gap-4">
-                          {/* Project Icon */}
-                          <div className={`p-3 rounded-xl bg-gradient-to-r ${project.color} text-white shadow-lg flex-shrink-0`}>
-                            <IconComponent className="w-8 h-8" />
+                        {/* Project Icon - Minimal */}
+                        <div className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center mr-2 md:mr-3 flex-shrink-0">
+                          <IconComponent className="w-4 h-4 md:w-6 md:h-6 text-[#E95420]" />
+                        </div>
+
+                        {/* Project Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1 gap-1">
+                            <h3 className="text-xs md:text-sm font-medium text-white truncate" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                              {project.name}
+                            </h3>
+                            <span className={`px-1.5 md:px-2 py-0.5 text-xs border flex-shrink-0 self-start sm:self-auto ${
+                              project.status.toLowerCase() === 'completed' || project.status.toLowerCase() === 'live' 
+                                ? 'bg-[#4CAF50]/20 text-[#4CAF50] border-[#4CAF50]/30'
+                                : 'bg-[#2D2D2D] text-[#B3B3B3] border-[#3D3D3D]'
+                            }`} style={{ fontSize: '10px' }}>
+                              {project.status}
+                            </span>
                           </div>
+                          
+                          <p className="text-[#B3B3B3] text-xs mb-2 line-clamp-2 md:line-clamp-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                            {project.description}
+                          </p>
 
-                          {/* Project Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-2">
-                              <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
-                                {project.name}
-                              </h3>
-                              <span className={`px-2 py-1 text-xs rounded-full border ${getStatusColor(project.status)} flex-shrink-0 ml-2`}>
-                                {project.status}
-                              </span>
-                            </div>
-                            
-                            <p className="text-gray-400 text-sm mb-3 line-clamp-2 leading-relaxed">
-                              {project.description}
-                            </p>
-
-                            <div className="flex items-center justify-between">
-                              {/* Tech Stack */}
-                              <div className="flex flex-wrap gap-1">
-                                {project.tech.slice(0, 3).map(tech => (
-                                  <span
-                                    key={tech}
-                                    className="text-xs px-2 py-1 bg-gray-700/50 text-gray-300 rounded-full"
-                                  >
-                                    {tech}
-                                  </span>
-                                ))}
-                                {project.tech.length > 3 && (
-                                  <span className="text-xs px-2 py-1 bg-gray-700/50 text-gray-400 rounded-full">
-                                    +{project.tech.length - 3}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Year and Arrow */}
-                              <div className="flex items-center gap-3 flex-shrink-0">
-                                <div className="flex items-center text-gray-400 text-sm">
-                                  <Calendar className="w-4 h-4 mr-1" />
-                                  {project.year}
-                                </div>
-                                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <ExternalLink className="w-4 h-4 text-blue-400" />
-                                </div>
-                              </div>
-                            </div>
+                          <div className="flex flex-wrap items-center gap-1 md:gap-2 text-xs text-[#808080]">
+                            <span className="hidden sm:inline">{project.tech.slice(0, 2).join(', ')}</span>
+                            <span className="sm:hidden">{project.tech[0]}</span>
+                            {project.tech.length > 2 && <span className="hidden sm:inline">+{project.tech.length - 2}</span>}
+                            {project.tech.length > 1 && <span className="hidden sm:inline mx-1">•</span>}
+                            <Calendar className="w-3 h-3" />
+                            <span>{project.year}</span>
                           </div>
                         </div>
                       </div>
@@ -421,60 +433,64 @@ const ProjectsApp = ({ onClose }) => {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-20">
-                  <Search className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                  <h3 className="text-xl font-medium text-gray-400 mb-2">No projects found</h3>
-                  <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+                <div className="text-center py-10 md:py-20">
+                  <Search className="w-8 h-8 md:w-12 md:h-12 text-[#808080] mx-auto mb-4" />
+                  <h3 className="text-sm md:text-base font-medium text-[#B3B3B3] mb-2" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>No projects found</h3>
+                  <p className="text-[#808080] text-xs md:text-sm" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Try adjusting your search or filter criteria</p>
                 </div>
               )}
             </div>
           </>
         ) : (
-          /* Project Detail View - Compact for window */
-          <div className="h-full flex flex-col overflow-hidden">
-            {/* Project Header - Reduced height */}
-            <div className="relative flex-shrink-0">
-              <div className={`h-32 bg-gradient-to-r ${selectedProject.color} relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-black/20" />
-                <div className="absolute inset-0 flex items-center justify-center p-4">
-                  <div className="text-center text-white">
-                    <div className="mb-2">
-                      {React.createElement(selectedProject.icon, { className: "w-10 h-10 mx-auto" })}
-                    </div>
-                    <h1 className="text-xl font-bold mb-1">{selectedProject.name}</h1>
-                    <span className={`inline-block px-2 py-1 text-xs rounded-full border ${getStatusColor(selectedProject.status)} bg-black/20`}>
+          /* Project Detail View - Ubuntu style */
+          <div className="h-full flex flex-col overflow-hidden bg-[#1E1E1E]">
+            {/* Project Header - Ubuntu style */}
+            <div className="relative flex-shrink-0 bg-[#2D2D2D] border-b border-[#3D3D3D] p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {React.createElement(IconComponent, { className: "w-8 h-8 text-[#E95420]" })}
+                  <div>
+                    <h1 className="text-base font-medium text-white mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                      {selectedProject.name}
+                    </h1>
+                    <span className={`inline-block px-2 py-0.5 text-xs border ${
+                      selectedProject.status.toLowerCase() === 'completed' || selectedProject.status.toLowerCase() === 'live' 
+                        ? 'bg-[#4CAF50]/20 text-[#4CAF50] border-[#4CAF50]/30'
+                        : 'bg-[#2D2D2D] text-[#B3B3B3] border-[#3D3D3D]'
+                    }`}>
                       {selectedProject.status}
                     </span>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-3 right-3 p-1.5 bg-black/20 backdrop-blur-sm rounded-lg hover:bg-black/30 transition-colors"
+                  className="ubuntu-button p-1.5"
+                  style={{ padding: '4px 8px', minWidth: 'auto' }}
                 >
-                  <X className="w-4 h-4 text-white" />
+                  <X className="w-4 h-4 text-[#B3B3B3]" />
                 </button>
               </div>
             </div>
 
             {/* Content - Scrollable */}
-            <div className="flex-1 overflow-auto p-4">
+            <div className="flex-1 overflow-auto p-4 ubuntu-scrollbar">
               <div className="space-y-4">
                 {/* Description */}
-                <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
-                  <h2 className="text-lg font-semibold text-white mb-2">About This Project</h2>
-                  <p className="text-gray-300 text-sm leading-relaxed">{selectedProject.description}</p>
+                <div className="ubuntu-card">
+                  <h2 className="text-sm font-medium text-white mb-2" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>About This Project</h2>
+                  <p className="text-[#B3B3B3] text-xs leading-relaxed" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{selectedProject.description}</p>
                 </div>
 
-                {/* Two Column Layout for better space usage */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Two Column Layout - Responsive */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
                   {/* Features */}
-                  <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
-                    <h2 className="text-lg font-semibold text-white mb-3">Key Features</h2>
+                  <div className="ubuntu-card">
+                    <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Key Features</h2>
                     <div className="space-y-2">
                       {selectedProject.features.map((feature, index) => (
                         <div key={index} className="flex items-start space-x-2">
-                          <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-300 text-xs">{feature}</span>
+                          <CheckCircle className="w-3 h-3 text-[#4CAF50] flex-shrink-0 mt-0.5" />
+                          <span className="text-[#B3B3B3] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -483,25 +499,25 @@ const ProjectsApp = ({ onClose }) => {
                   {/* Tech Stack & Info */}
                   <div className="space-y-4">
                     {/* Tech Stack */}
-                    <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
-                      <h3 className="text-lg font-semibold text-white mb-3">Tech Stack</h3>
+                    <div className="ubuntu-card">
+                      <h3 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Tech Stack</h3>
                       <div className="space-y-1.5">
                         {selectedProject.tech.map(tech => (
                           <div key={tech} className="flex items-center space-x-2">
-                            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-                            <span className="text-gray-300 text-xs">{tech}</span>
+                            <div className="w-1.5 h-1.5 bg-[#E95420] rounded-full" />
+                            <span className="text-[#B3B3B3] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{tech}</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {/* Project Links */}
-                    <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
-                      <h3 className="text-lg font-semibold text-white mb-3">Links</h3>
+                    <div className="ubuntu-card">
+                      <h3 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Links</h3>
                       <div className="space-y-2">
                         <button 
                           onClick={() => handleLinkClick(selectedProject.demoUrl, 'Demo')}
-                          className="w-full flex items-center justify-center space-x-2 p-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors text-sm"
+                          className="ubuntu-button primary w-full flex items-center justify-center space-x-2 text-sm"
                         >
                           <Play className="w-3 h-3" />
                           <span>Live Demo</span>
@@ -509,7 +525,7 @@ const ProjectsApp = ({ onClose }) => {
                         </button>
                         <button 
                           onClick={() => handleLinkClick(selectedProject.githubUrl, 'GitHub Repository')}
-                          className="w-full flex items-center justify-center space-x-2 p-2 bg-gray-700/50 text-gray-300 border border-gray-600/50 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                          className="ubuntu-button w-full flex items-center justify-center space-x-2 text-sm"
                         >
                           <Github className="w-3 h-3" />
                           <span>Source Code</span>
@@ -522,13 +538,14 @@ const ProjectsApp = ({ onClose }) => {
 
                 {/* Industries (for AI Solutions) */}
                 {selectedProject.industries && (
-                  <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
-                    <h2 className="text-lg font-semibold text-white mb-3">Target Industries</h2>
+                  <div className="ubuntu-card">
+                    <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Target Industries</h2>
                     <div className="flex flex-wrap gap-2">
                       {selectedProject.industries.map(industry => (
                         <span
                           key={industry}
-                          className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs border border-blue-500/30"
+                          className="px-2 py-1 bg-[#2D2D2D] text-[#B3B3B3] border border-[#3D3D3D] text-xs"
+                          style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                         >
                           {industry}
                         </span>
@@ -550,3 +567,16 @@ export default ProjectsApp;
 export const displayProjects = (props) => {
   return <ProjectsApp {...props} />;
 };
+
+// For SSR - fetch projects data
+export async function getProjectsData() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+    const response = await fetch(`${baseUrl}/projects`, { cache: 'no-store' });
+    const data = await response.json();
+    return data.success ? data.data : [];
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    return [];
+  }
+}

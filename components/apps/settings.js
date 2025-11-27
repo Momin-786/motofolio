@@ -119,65 +119,65 @@ export function Settings(props) {
 
     return (
          <div 
-        className="w-full flex-col flex-grow z-20 max-h-full overflow-y-auto windowMainScreen select-none bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900"
+        className="w-full h-full bg-[#1E1E1E] font-['Ubuntu_Mono',monospace] overflow-hidden ubuntu-scrollbar"
         style={{
-            color: '#d8dee9', // Keeping text color light for contrast
-            fontFamily: '"Fira Code", "JetBrains Mono", monospace'
+            color: '#FFFFFF',
+            fontFamily: "'Ubuntu Mono', monospace"
         }}
     >
-            {/* Header Section */}
-            <div 
-                className="px-6 py-4 border-b  bg-gray-900/95 backdrop-blur-md border-gray-700/50"
-               
-            >
-                <h2 
-                    className="text-xl font-medium"
-                    style={{
-                        color: '#eceff4', // Nord6
-                        fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                    }}
-                >
-                    System Settings
-                </h2>
-                <p 
-                    className="text-sm mt-1"
-                    style={{ color: '#88c0d0' }} // Nord8
-                >
-                    Customize your desktop environment
-                </p>
+            <div className="w-full h-full flex flex-col">
+            {/* Ubuntu-style Header */}
+            <div className="flex-shrink-0 bg-[#2D2D2D] border-b border-[#3D3D3D] p-3 md:p-4">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 
+                            className="text-base md:text-lg font-medium text-white"
+                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
+                        >
+                            System Settings
+                        </h2>
+                        <p 
+                            className="text-xs md:text-sm mt-1 text-[#B3B3B3]"
+                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
+                        >
+                            Customize your desktop environment
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            {/* Main Preview */}
-            <div className="px-6 py-4">
+            {/* Main Scrollable Content Container */}
+            <div className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar">
+            {/* Main Preview - Ubuntu style */}
+            <div className="p-3 md:p-4 bg-[#2D2D2D] border-b border-[#3D3D3D]">
                 <div 
-                    className="w-full max-w-md mx-auto h-48 relative rounded border overflow-hidden"
+                    className="w-full max-w-md mx-auto h-40 md:h-48 relative rounded overflow-hidden border"
                     style={{
-                        borderColor: '#3b4252', // Nord1
-                        backgroundColor: '#2e3440' // Nord0
+                        borderColor: '#3D3D3D',
+                        backgroundColor: '#1E1E1E'
                     }}
                 >
                     {renderPreview(currentWallpaper, true)}
                     
-                    {/* Preview Info */}
+                    {/* Preview Info - Ubuntu style */}
                     <div 
                         className="absolute bottom-0 left-0 right-0 px-3 py-2"
                         style={{
-                            backgroundColor: 'rgba(46, 52, 64, 0.8)', // Nord0 with opacity
+                            backgroundColor: 'rgba(30, 30, 30, 0.85)',
                             backdropFilter: 'blur(4px)'
                         }}
                     >
                         <div 
-                            className="text-sm font-medium"
+                            className="text-xs md:text-sm font-medium text-white"
                             style={{ 
-                                color: '#eceff4', // Nord6
-                                fontFamily: '"Fira Code", "JetBrains Mono", monospace'
+                                fontFamily: "'Ubuntu Mono', monospace"
                             }}
                         >
                             {currentWallpaper.name}
                         </div>
                         <div 
-                            className="text-xs mt-1"
-                            style={{ color: '#88c0d0' }} // Nord8
+                            className="text-xs mt-1 text-[#808080]"
+                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                         >
                             {currentWallpaper.type === 'video' ? 'video/mp4' : 'image/static'}
                         </div>
@@ -185,36 +185,25 @@ export function Settings(props) {
                 </div>
             </div>
 
-            {/* Opacity Control Section */}
-            <div 
-                className="px-6 py-4 border-t"
-                style={{ borderColor: '#3b4252' }} // Nord1
-            >
+            {/* Opacity Control Section - Ubuntu style */}
+            <div className="p-3 md:p-4 bg-[#2D2D2D] border-b border-[#3D3D3D]">
                 <div className="max-w-md mx-auto">
                     <div className="flex items-center justify-between mb-3">
                         <h3 
-                            className="text-base font-medium"
-                            style={{
-                                color: '#eceff4', // Nord6
-                                fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                            }}
+                            className="text-sm md:text-base font-medium text-white"
+                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                         >
                             Background Opacity
                         </h3>
                         <span 
-                            className="text-sm px-2 py-1 rounded border"
-                            style={{
-                                color: '#d8dee9', // Nord4
-                                backgroundColor: '#3b4252', // Nord1
-                                borderColor: '#4c566a', // Nord3
-                                fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                            }}
+                            className="text-xs md:text-sm px-2 py-1 rounded border bg-[#1E1E1E] text-[#B3B3B3] border-[#3D3D3D]"
+                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                         >
                             {backgroundOpacity}%
                         </span>
                     </div>
                     
-                    {/* Custom Slider */}
+                    {/* Custom Slider - Ubuntu style */}
                     <div className="relative">
                         <input
                             type="range"
@@ -226,8 +215,8 @@ export function Settings(props) {
                             className="w-full h-2 rounded-lg cursor-pointer slider"
                             style={{
                                 background: `linear-gradient(to right, 
-                                    #5e81ac ${backgroundOpacity}%, 
-                                    #4c566a ${backgroundOpacity}%)`, // Nord10, Nord3
+                                    #E95420 ${backgroundOpacity}%, 
+                                    #3D3D3D ${backgroundOpacity}%)`,
                                 outline: 'none',
                                 appearance: 'none',
                                 WebkitAppearance: 'none'
@@ -236,55 +225,43 @@ export function Settings(props) {
                         
                         {/* Slider Labels */}
                         <div 
-                            className="flex justify-between mt-2 text-xs"
-                            style={{ 
-                                color: '#81a1c1', // Nord9
-                                fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                            }}
+                            className="flex justify-between mt-2 text-xs text-[#808080]"
+                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                         >
-                            <span>10% (transparent)</span>
-                            <span>100% (opaque)</span>
+                            <span>10%</span>
+                            <span>100%</span>
                         </div>
                     </div>
                     
                     <p 
-                        className="text-xs mt-3"
-                        style={{ color: '#81a1c1' }} // Nord9
+                        className="text-xs mt-3 text-[#808080]"
+                        style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                     >
-                        Adjust transparency for optimal terminal visibility
+                        Adjust transparency for optimal visibility
                     </p>
                 </div>
             </div>
 
-            {/* Content Section */}
-            <div 
-                className="px-6 py-4 border-t"
-                style={{ borderColor: '#3b4252' }} // Nord1
-            >
-                <div className="mb-4">
+            {/* Content Section - Ubuntu style */}
+            <div className="p-3 md:p-4 bg-[#1E1E1E]">
+                <div className="mb-3 md:mb-4">
                     <h3 
-                        className="text-base font-medium mb-2"
-                        style={{
-                            color: '#eceff4', // Nord6
-                            fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                        }}
+                        className="text-sm md:text-base font-medium mb-2 text-white"
+                        style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                     >
                         Available Backgrounds
                     </h3>
                     <div 
-                        className="flex gap-6 text-sm"
-                        style={{ 
-                            color: '#81a1c1', // Nord9
-                            fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                        }}
+                        className="flex gap-4 md:gap-6 text-xs md:text-sm text-[#808080]"
+                        style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                     >
                         <span>[img] Static Images</span>
                         <span>[vid] Video Loops</span>
                     </div>
                 </div>
                 
-                {/* Wallpaper Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {/* Wallpaper Grid - Responsive */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
                     {Object.keys(wallpapers).map((name, index) => {
                         const wallpaperData = wallpapers[name];
                         const isSelected = name === props.currBgImgName;
@@ -298,16 +275,15 @@ export function Settings(props) {
                                 className={`
                                     relative outline-none cursor-pointer group
                                     transition-all duration-150 
-                                    w-full aspect-video rounded border overflow-hidden
+                                    w-full aspect-video rounded overflow-hidden border
                                     ${isSelected 
-                                        ? "ring-2" 
-                                        : "hover:ring-1"
+                                        ? "ring-2 ring-[#E95420]" 
+                                        : "hover:ring-1 hover:ring-[#3D3D3D]"
                                     }
                                 `}
                                 style={{
-                                    backgroundColor: '#2e3440', // Nord0
-                                    borderColor: isSelected ? '#5e81ac' : '#3b4252', // Nord10, Nord1
-                                    ringColor: isSelected ? '#88c0d0' : '#4c566a' // Nord8, Nord3
+                                    backgroundColor: '#1E1E1E',
+                                    borderColor: isSelected ? '#E95420' : '#3D3D3D'
                                 }}
                                 title={`${wallpaperData.name} (${wallpaperData.type})`}
                             >
@@ -316,45 +292,36 @@ export function Settings(props) {
                                     {renderPreview(wallpaperData)}
                                 </div>
                                 
-                                {/* Type indicator */}
+                                {/* Type indicator - Ubuntu style */}
                                 <div 
-                                    className="absolute top-1 right-1 px-1.5 py-0.5 text-xs font-mono rounded"
-                                    style={{
-                                        backgroundColor: 'rgba(46, 52, 64, 0.8)', // Nord0 with opacity
-                                        color: '#88c0d0', // Nord8
-                                        fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                                    }}
+                                    className="absolute top-1 right-1 px-1.5 py-0.5 text-xs rounded bg-[#1E1E1E]/80 text-[#808080]"
+                                    style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                                 >
                                     {wallpaperData.type === 'video' ? 'vid' : 'img'}
                                 </div>
                                 
-                                {/* Selection indicator */}
+                                {/* Selection indicator - Ubuntu style */}
                                 {isSelected && (
                                     <div 
                                         className="absolute inset-0 flex items-center justify-center"
                                         style={{
-                                            backgroundColor: 'rgba(94, 129, 172, 0.2)' // Nord10 with opacity
+                                            backgroundColor: 'rgba(233, 84, 32, 0.15)'
                                         }}
                                     >
                                         <div 
-                                            className="px-2 py-1 text-xs font-mono rounded border"
-                                            style={{
-                                                backgroundColor: 'rgba(46, 52, 64, 0.8)', // Nord0 with opacity
-                                                color: '#eceff4', // Nord6
-                                                borderColor: '#5e81ac', // Nord10
-                                                fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                                            }}
+                                            className="px-2 py-1 text-xs rounded border bg-[#1E1E1E]/90 text-white border-[#E95420]"
+                                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                                         >
                                             ACTIVE
                                         </div>
                                     </div>
                                 )}
                                 
-                                {/* Hover overlay */}
+                                {/* Hover overlay - Ubuntu style */}
                                 <div 
                                     className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
                                     style={{
-                                        backgroundColor: 'rgba(255, 255, 255, 0.05)'
+                                        backgroundColor: 'rgba(233, 84, 32, 0.05)'
                                     }}
                                 />
                             </div>
@@ -363,57 +330,49 @@ export function Settings(props) {
                 </div>
             </div>
             
-            {/* Footer Instructions */}
-            <div 
-                className="px-6 py-4 border-t"
-                style={{ 
-                    borderColor: '#3b4252', // Nord1
-                    backgroundColor: '#3b4252' // Nord1
-                }}
-            >
+            {/* Footer Instructions - Ubuntu style */}
+            <div className="p-3 md:p-4 bg-[#2D2D2D] border-t border-[#3D3D3D]">
                 <div 
-                    className="text-sm"
-                    style={{ 
-                        color: '#81a1c1', // Nord9
-                        fontFamily: '"Fira Code", "JetBrains Mono", monospace'
-                    }}
+                    className="text-xs md:text-sm text-[#808080]"
+                    style={{ fontFamily: "'Ubuntu Mono', monospace" }}
                 >
                     <p>Select thumbnail to apply background</p>
                     <p className="mt-1 text-xs">Video backgrounds loop automatically (muted)</p>
                 </div>
             </div>
+            </div>
             
-            {/* Custom Slider Styles */}
+            {/* Custom Slider Styles - Ubuntu theme */}
             <style jsx>{`
                 .slider::-webkit-slider-thumb {
                     appearance: none;
-                    height: 18px;
-                    width: 18px;
+                    height: 16px;
+                    width: 16px;
                     border-radius: 50%;
-                    background: #eceff4; // Nord6
-                    border: 2px solid #5e81ac; // Nord10
+                    background: #FFFFFF;
+                    border: 2px solid #E95420;
                     cursor: pointer;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
                 }
                 
                 .slider::-webkit-slider-thumb:hover {
-                    background: #88c0d0; // Nord8
-                    border-color: #81a1c1; // Nord9
+                    background: #E95420;
+                    border-color: #FFFFFF;
                 }
                 
                 .slider::-moz-range-thumb {
-                    height: 18px;
-                    width: 18px;
+                    height: 16px;
+                    width: 16px;
                     border-radius: 50%;
-                    background: #eceff4; // Nord6
-                    border: 2px solid #5e81ac; // Nord10
+                    background: #FFFFFF;
+                    border: 2px solid #E95420;
                     cursor: pointer;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
                 }
                 
                 .slider::-moz-range-thumb:hover {
-                    background: #88c0d0; // Nord8
-                    border-color: #81a1c1; // Nord9
+                    background: #E95420;
+                    border-color: #FFFFFF;
                 }
                 
                 .slider::-moz-range-track {
@@ -421,6 +380,7 @@ export function Settings(props) {
                     border-radius: 4px;
                 }
             `}</style>
+            </div>
         </div>
     )
 }

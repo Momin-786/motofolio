@@ -755,6 +755,10 @@ renderGlassyTaskbarApps = () => {
           bg_image_name: this.props.bg_image_name,
           windowIndex: windowIndex >= 0 ? windowIndex : 0,
           onMaximize: this.handleMaximizeChange,
+          // Pass data to apps
+          projectsData: this.props.projectsData,
+          skillsData: this.props.skillsData,
+          aboutData: this.props.aboutData,
         };
 
         windowsJsx.push(<Window key={index} {...props} />);
@@ -885,8 +889,8 @@ renderGlassyTaskbarApps = () => {
           <BackgroundImage img={this.props.bg_image_name} />
         </div>
 
-        {/* Desktop Area - Full height for windows */}
-        <div className="h-[calc(100vh-100px)] relative z-10">
+        {/* Desktop Area - Full height for windows - Responsive */}
+        <div className="h-[calc(100vh-80px)] md:h-[calc(100vh-100px)] relative z-10">
           {/* Window Area - Only your app windows */}
           <div
             className="absolute h-full w-full bg-transparent z-10"
@@ -904,31 +908,31 @@ renderGlassyTaskbarApps = () => {
           <DefaultMenu active={this.state.context_menus.default} />
         </div>
 
-        {/* GLASSMORPHISM TASKBAR WITH FONTS */}
-        <div className="h-25 flex items-center justify-center px-8 pb-6 relative z-40">
+        {/* GLASSMORPHISM TASKBAR WITH FONTS - Responsive */}
+        <div className="h-20 md:h-25 flex items-center justify-center px-2 md:px-8 pb-2 md:pb-6 relative z-40">
           <div
-            className="flex items-center justify-between bg-gray-800/20 backdrop-blur-xl border border-gray-700/30 rounded-2xl shadow-2xl px-5 py-2 w-2/3 max-w-4xl"
+            className="flex items-center justify-between bg-gray-800/20 backdrop-blur-xl border border-gray-700/30 rounded-xl md:rounded-2xl shadow-2xl px-2 md:px-5 py-1.5 md:py-2 w-full md:w-2/3 md:max-w-4xl"
             style={{
               backgroundColor: "rgba(31, 41, 55, 0.15)",
               backdropFilter: "blur(24px)",
               borderColor: "var(--border)",
             }}
           >
-            {/* Left: Active Windows */}
-            <div className="flex items-center space-x-2 flex-1">
+            {/* Left: Active Windows - Hidden on mobile */}
+            <div className="hidden md:flex items-center space-x-2 flex-1">
               {this.renderActiveWindows()}
             </div>
 
-            {/* Center: App Icons */}
-            <div className="flex items-center space-x-3 px-4">
+            {/* Center: App Icons - Scrollable on mobile */}
+            <div className="flex items-center space-x-1 md:space-x-3 px-1 md:px-4 overflow-x-auto ubuntu-scrollbar flex-1 md:flex-none">
               {this.renderGlassyTaskbarApps()}
             </div>
 
             {/* Right: Clock + Theme Selector */}
-            <div className="flex items-center justify-end flex-1 space-x-3">
-              {/* Clock with mono font */}
+            <div className="flex items-center justify-end space-x-1 md:space-x-3 flex-shrink-0">
+              {/* Clock with mono font - Smaller on mobile */}
               <div
-                className="text-gray-200 text-sm font-medium"
+                className="text-gray-200 text-xs md:text-sm font-medium hidden sm:block"
                 style={{
                   fontFamily: "var(--font-mono)",
                   color: "var(--text-primary)",
@@ -940,8 +944,10 @@ renderGlassyTaskbarApps = () => {
                 })}
               </div>
 
-              {/* Theme Selector */}
-              {this.renderThemeSelector()}
+              {/* Theme Selector - Smaller on mobile */}
+              <div className="scale-75 md:scale-100">
+                {this.renderThemeSelector()}
+              </div>
             </div>
           </div>
         </div>

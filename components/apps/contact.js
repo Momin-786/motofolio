@@ -124,135 +124,134 @@ const ContactApp = ({ onClose }) => {
   }, [onClose]);
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 font-mono overflow-hidden">
+    <div className="w-full h-full bg-[#1E1E1E] font-['Ubuntu_Mono',monospace] overflow-hidden ubuntu-scrollbar">
       <div className="w-full h-full flex flex-col">
         
-        {/* Header */}
-        <div className="flex-shrink-0 bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 p-4">
+        {/* Ubuntu-style Header */}
+        <div className="flex-shrink-0 bg-[#2D2D2D] border-b border-[#3D3D3D] p-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                
+              <h1 className="text-base font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
                 Get In Touch
               </h1>
-              <p className="text-gray-400 text-sm mt-1">Let's discuss your next project</p>
+              <p className="text-[#B3B3B3] text-xs mt-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Let's discuss your next project</p>
             </div>
             {onClose && (
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+                className="ubuntu-button p-1.5"
+                style={{ padding: '4px 8px', minWidth: 'auto' }}
               >
-                <X className="w-5 h-5 text-gray-400" />
+                <X className="w-4 h-4 text-[#B3B3B3]" />
               </button>
             )}
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto">
-          <div className="p-4 space-y-6">
+        <div className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar">
+          <div className="p-4 space-y-4">
             
-            {/* Availability Status */}
-            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-                <h2 className="text-green-400 font-semibold">{availability.status}</h2>
+            {/* Availability Status - Ubuntu style */}
+            <div className="ubuntu-card p-3 border-[#4CAF50]/30">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 bg-[#4CAF50] rounded-full" />
+                <h2 className="text-[#4CAF50] text-sm font-medium" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.status}</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 <div>
-                  <div className="text-gray-400">Next Available</div>
-                  <div className="text-white font-medium">{availability.nextAvailable}</div>
+                  <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Next Available</div>
+                  <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.nextAvailable}</div>
                 </div>
                 <div>
-                  <div className="text-gray-400">Timezone</div>
-                  <div className="text-white font-medium">{availability.timezone}</div>
+                  <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Timezone</div>
+                  <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.timezone}</div>
                 </div>
                 <div>
-                  <div className="text-gray-400">Working Hours</div>
-                  <div className="text-white font-medium">{availability.workingHours}</div>
+                  <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Working Hours</div>
+                  <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.workingHours}</div>
                 </div>
               </div>
             </div>
 
            
 
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Two Column Layout - Responsive */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               
-              {/* Contact Information */}
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-white mb-4">Contact Information</h2>
+              {/* Contact Information - Ubuntu style */}
+              <div className="space-y-3">
+                <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Contact Information</h2>
                 
                 {contactInfo.map((contact) => {
                   const IconComponent = contact.icon;
                   return (
                     <div
                       key={contact.id}
-                      className="group bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 hover:border-gray-600/50 transition-all duration-300"
+                      className="ubuntu-list-item group"
                     >
-                      <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-lg bg-gradient-to-r ${contact.color} flex-shrink-0`}>
-                          <IconComponent className="w-5 h-5 text-white" />
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <h3 className="font-medium text-white">{contact.label}</h3>
-                            <div className="flex gap-2">
-                              {contact.link && (
-                                <a
-                                  href={contact.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="p-1.5 hover:bg-gray-700/50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                                >
-                                  <ExternalLink className="w-3 h-3 text-gray-400" />
-                                </a>
-                              )}
-                              <button
-                                onClick={() => copyToClipboard(contact.value, contact.id)}
-                                className="p-1.5 hover:bg-gray-700/50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                      <div className="w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                        <IconComponent className="w-5 h-5 text-[#E95420]" />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-sm font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{contact.label}</h3>
+                          <div className="flex gap-1">
+                            {contact.link && (
+                              <a
+                                href={contact.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1 hover:bg-[#3A3A3A] rounded opacity-0 group-hover:opacity-100 transition-opacity"
                               >
-                                {copiedField === contact.id ? (
-                                  <CheckCircle className="w-3 h-3 text-green-400" />
-                                ) : (
-                                  <Copy className="w-3 h-3 text-gray-400" />
-                                )}
-                              </button>
-                            </div>
+                                <ExternalLink className="w-3 h-3 text-[#B3B3B3]" />
+                              </a>
+                            )}
+                            <button
+                              onClick={() => copyToClipboard(contact.value, contact.id)}
+                              className="p-1 hover:bg-[#3A3A3A] rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              {copiedField === contact.id ? (
+                                <CheckCircle className="w-3 h-3 text-[#4CAF50]" />
+                              ) : (
+                                <Copy className="w-3 h-3 text-[#B3B3B3]" />
+                              )}
+                            </button>
                           </div>
-                          <p className="text-gray-300 text-sm font-mono break-all">{contact.value}</p>
-                          <p className="text-gray-500 text-xs mt-1">{contact.description}</p>
                         </div>
+                        <p className="text-[#B3B3B3] text-xs break-all" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{contact.value}</p>
+                        <p className="text-[#808080] text-xs mt-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{contact.description}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Contact Form */}
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-white mb-4">Send Message</h2>
+              {/* Contact Form - Ubuntu style */}
+              <div className="space-y-3">
+                <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Send Message</h2>
                 
                 {isSubmitted ? (
-                  <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-8 text-center">
-                    <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
-                    <h3 className="text-green-400 font-semibold text-lg mb-2">Message Sent!</h3>
-                    <p className="text-gray-300 text-sm mb-4">
+                  <div className="ubuntu-card p-6 text-center border-[#4CAF50]/30">
+                    <CheckCircle className="w-8 h-8 text-[#4CAF50] mx-auto mb-3" />
+                    <h3 className="text-[#4CAF50] text-sm font-medium mb-2" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Message Sent!</h3>
+                    <p className="text-[#B3B3B3] text-xs mb-4" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
                       Thank you for reaching out. I'll get back to you within 24 hours.
                     </p>
                     <button
                       onClick={() => setIsSubmitted(false)}
-                      className="px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors text-sm"
+                      className="ubuntu-button primary text-xs"
+                      style={{ padding: '6px 12px' }}
                     >
                       Send Another Message
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          <User className="w-4 h-4 inline mr-2" />
+                        <label className="block text-xs font-medium text-[#B3B3B3] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                          <User className="w-3 h-3 inline mr-1" />
                           Name
                         </label>
                         <input
@@ -261,14 +260,14 @@ const ContactApp = ({ onClose }) => {
                           value={formData.name}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
+                          className="ubuntu-input"
                           placeholder="Your name"
                         />
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          <Mail className="w-4 h-4 inline mr-2" />
+                        <label className="block text-xs font-medium text-[#B3B3B3] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                          <Mail className="w-3 h-3 inline mr-1" />
                           Email
                         </label>
                         <input
@@ -277,15 +276,15 @@ const ContactApp = ({ onClose }) => {
                           value={formData.email}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
+                          className="ubuntu-input"
                           placeholder="your@email.com"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        <MessageSquare className="w-4 h-4 inline mr-2" />
+                      <label className="block text-xs font-medium text-[#B3B3B3] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                        <MessageSquare className="w-3 h-3 inline mr-1" />
                         Subject
                       </label>
                       <input
@@ -294,14 +293,14 @@ const ContactApp = ({ onClose }) => {
                         value={formData.subject}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
+                        className="ubuntu-input"
                         placeholder="Project inquiry, collaboration, etc."
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        <MessageSquare className="w-4 h-4 inline mr-2" />
+                      <label className="block text-xs font-medium text-[#B3B3B3] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                        <MessageSquare className="w-3 h-3 inline mr-1" />
                         Message
                       </label>
                       <textarea
@@ -309,8 +308,8 @@ const ContactApp = ({ onClose }) => {
                         value={formData.message}
                         onChange={handleInputChange}
                         required
-                        rows={6}
-                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 resize-none"
+                        rows={5}
+                        className="ubuntu-input resize-none"
                         placeholder="Tell me about your project, timeline, budget, or any questions you have..."
                       />
                     </div>
@@ -318,17 +317,16 @@ const ContactApp = ({ onClose }) => {
                     <button
                       onClick={handleSubmit}
                       disabled={isSubmitting}
-                     className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-900 text-white rounded-lg hover:from-blue-600 hover:to-blue-950 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-
+                      className="ubuntu-button primary w-full flex items-center justify-center gap-2 text-sm"
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           Sending...
                         </>
                       ) : (
                         <>
-                          <Send className="w-4 h-4" />
+                          <Send className="w-3 h-3" />
                           Send Message
                         </>
                       )}
@@ -336,14 +334,14 @@ const ContactApp = ({ onClose }) => {
                   </div>
                 )}
                 
-                <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
-                  <h3 className="text-white font-medium mb-2">Response Time</h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <Clock className="w-4 h-4 text-blue-400" />
+                <div className="ubuntu-card p-3">
+                  <h3 className="text-xs font-medium text-white mb-2" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Response Time</h3>
+                  <div className="flex items-center gap-2 text-xs text-[#B3B3B3] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                    <Clock className="w-3 h-3 text-[#E95420]" />
                     <span>I typically respond within 24 hours</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-300 mt-1">
-                    <Calendar className="w-4 h-4 text-green-400" />
+                  <div className="flex items-center gap-2 text-xs text-[#B3B3B3]" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                    <Calendar className="w-3 h-3 text-[#4CAF50]" />
                     <span>Available for meetings Monday - Friday</span>
                   </div>
                 </div>

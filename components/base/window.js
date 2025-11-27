@@ -57,17 +57,17 @@ export class Window extends Component {
     animateWindowOpen = () => {
         const windowElement = document.querySelector("#" + this.id);
         if (windowElement) {
-            // Start with scaled down and transparent
-            windowElement.style.transform = `translate(${this.startX}px, ${this.startY}px) scale(0.8)`;
+            // Start with scaled down and transparent - GPU accelerated
+            windowElement.style.transform = `translate3d(${this.startX}px, ${this.startY}px, 0) scale(0.8)`;
             windowElement.style.opacity = '0';
             windowElement.style.transition = 'none';
             
             // Force a reflow
             windowElement.offsetHeight;
             
-            // Apply smooth opening animation
-            windowElement.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-            windowElement.style.transform = `translate(${this.startX}px, ${this.startY}px) scale(1)`;
+            // GPU-accelerated opening animation
+            windowElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            windowElement.style.transform = `translate3d(${this.startX}px, ${this.startY}px, 0) scale(1)`;
             windowElement.style.opacity = '1';
         }
     }
@@ -75,53 +75,57 @@ export class Window extends Component {
     setCascadePosition = () => {
         // Get window index from props or calculate based on open windows
         const windowIndex = this.props.windowIndex || 0;
+        const isMobile = window.innerWidth < 640;
         
-        // Cascade offset - each new window offset by 30px right and 30px down
-        const cascadeOffset = 30;
+        // Cascade offset - smaller on mobile
+        const cascadeOffset = isMobile ? 10 : 30;
         
-        // Base position - start much lower to account for top navigation bar
-        const baseX = 80;
-        const baseY = 120; // Increased from 80 to 120 to avoid top nav bar
+        // Base position - centered on mobile, offset on desktop
+        const baseX = isMobile ? 10 : 80;
+        const baseY = isMobile ? 60 : 120;
         
         // Calculate final position with cascade
         this.startX = baseX + (windowIndex * cascadeOffset);
         this.startY = baseY + (windowIndex * cascadeOffset);
         
-        // Prevent windows from going off-screen, accounting for top nav bar
-        const maxX = window.innerWidth * 0.5; // More conservative to keep windows visible
-        const maxY = window.innerHeight * 0.4; // Account for both top nav and bottom taskbar
+        // Prevent windows from going off-screen
+        const maxX = isMobile ? window.innerWidth * 0.05 : window.innerWidth * 0.5;
+        const maxY = isMobile ? window.innerHeight * 0.1 : window.innerHeight * 0.4;
         
         if (this.startX > maxX) {
-            this.startX = baseX; // Reset to base if too far right
+            this.startX = baseX;
         }
         if (this.startY > maxY) {
-            this.startY = baseY; // Reset to base if too far down
+            this.startY = baseY;
         }
     }
 
     setDefaultWindowDimenstion = () => {
-        // Special sizing for different window types
+        // Responsive sizing for mobile, tablet, and desktop
+        const isMobile = window.innerWidth < 640;
+        const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+        
         if (this.id === "settings") {
-            // Settings window - much smaller and more manageable
-            if (window.innerWidth < 640) {
-                this.setState({ height: 55, width: 85 }, this.resizeBoundries);
+            // Settings window - responsive sizing
+            if (isMobile) {
+                this.setState({ height: 80, width: 95 }, this.resizeBoundries);
             }
-            else if (window.innerWidth < 1024) {
-                this.setState({ height: 60, width: 60 }, this.resizeBoundries);
-            }
-            else {
-                this.setState({ height: 55, width: 45 }, this.resizeBoundries); // Much smaller for desktop
-            }
-        } else {
-            // Default sizing for other windows - narrower widths
-            if (window.innerWidth < 640) {
-                this.setState({ height: 65, width: 90 }, this.resizeBoundries);
-            }
-            else if (window.innerWidth < 1024) {
+            else if (isTablet) {
                 this.setState({ height: 70, width: 70 }, this.resizeBoundries);
             }
             else {
-                this.setState({ height: 70, width: 50 }, this.resizeBoundries); // Narrower default width
+                this.setState({ height: 55, width: 45 }, this.resizeBoundries);
+            }
+        } else {
+            // Default sizing for other windows - full width on mobile
+            if (isMobile) {
+                this.setState({ height: 85, width: 95 }, this.resizeBoundries);
+            }
+            else if (isTablet) {
+                this.setState({ height: 75, width: 75 }, this.resizeBoundries);
+            }
+            else {
+                this.setState({ height: 70, width: 50 }, this.resizeBoundries);
             }
         }
     }
@@ -192,10 +196,10 @@ export class Window extends Component {
         
         var r = document.querySelector("#" + this.id);
         if (r) {
-            // Use hardware acceleration and smooth transition
-            r.style.transition = 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            // GPU-accelerated minimize animation
+            r.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             r.style.transformOrigin = 'center bottom';
-            r.style.transform = `translate(${posx}px, ${window.innerHeight - 100}px) scale(0.2)`;
+            r.style.transform = `translate3d(${posx}px, ${window.innerHeight - 100}px, 0) scale(0.2)`;
             r.style.opacity = '0.7';
             
             setTimeout(() => {
@@ -219,10 +223,10 @@ export class Window extends Component {
             let posx = r.style.getPropertyValue("--window-transform-x") || "80px";
             let posy = r.style.getPropertyValue("--window-transform-y") || "120px";
 
-            // Smooth restore animation
-            r.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            // GPU-accelerated restore animation
+            r.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             r.style.transformOrigin = 'center center';
-            r.style.transform = `translate(${posx},${posy}) scale(1)`;
+            r.style.transform = `translate3d(${parseFloat(posx)}, ${parseFloat(posy)}, 0) scale(1)`;
             r.style.opacity = '1';
             
             // Reset z-index to normal when restoring
@@ -263,10 +267,10 @@ export class Window extends Component {
                     this.props.onMaximize(this.id, true);
                 }
                 
-                // Smooth maximize animation
-                r.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                // GPU-accelerated maximize animation
+                r.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
                 r.style.transformOrigin = 'center center';
-                r.style.transform = `translate(0px, 0px) scale(1)`;
+                r.style.transform = `translate3d(0px, 0px, 0) scale(1)`;
                 
                 setTimeout(() => {
                     this.setState({ 
@@ -293,12 +297,12 @@ export class Window extends Component {
         
         const windowElement = document.querySelector("#" + this.id);
         if (windowElement) {
-            // Smooth close animation - scale down and fade out
-            windowElement.style.transition = 'all 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53)';
+            // GPU-accelerated close animation - scale down and fade out
+            const currentTransform = windowElement.style.transform || 'translate3d(0, 0, 0)';
+            windowElement.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
             windowElement.style.transformOrigin = 'center center';
-            windowElement.style.transform = windowElement.style.transform.replace(/scale\([^)]*\)/, '') + ' scale(0.8)';
+            windowElement.style.transform = currentTransform.replace(/scale\([^)]*\)/, '') + ' scale(0.9)';
             windowElement.style.opacity = '0';
-            windowElement.style.filter = 'blur(2px)';
         }
         
         this.setState({ closed: true }, () => {
@@ -328,21 +332,24 @@ export class Window extends Component {
                     style={{
                         width: `${this.state.width}%`,
                         height: `${this.state.height}%`,
-                        backgroundColor: 'rgba(31, 41, 55, 0.15)',
-                        backdropFilter: 'blur(24px)',
-                        border: '2px solid var(--accent-primary)',
-                        borderRadius: this.state.maximized ? '0' : '12px',
-                        boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--accent-primary)/30, 0 0 20px var(--accent-glow)/40`,
-                        // Remove transition from inline styles to prevent conflicts
+                        backgroundColor: '#2D2D2D', // Ubuntu bg-secondary
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid #3D3D3D', // Ubuntu border - minimal, not colorful
+                        borderRadius: this.state.maximized ? '0' : '4px', // Ubuntu style - smaller radius
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)', // Minimal shadow
+                        // GPU acceleration for smooth animations
+                        transform: 'translateZ(0)',
+                        willChange: this.state.isAnimating ? 'transform, opacity' : 'auto',
                         // Set z-index dynamically based on maximized state
                         zIndex: this.state.maximized ? '9999' : (this.props.isFocused ? '30' : '20'),
-                        // Use hardware acceleration
-                        willChange: this.state.isAnimating ? 'transform, opacity' : 'auto',
                         // Prevent text selection during animations
                         userSelect: this.state.isAnimating ? 'none' : 'auto',
-                        pointerEvents: this.state.isAnimating ? 'none' : 'auto'
+                        pointerEvents: this.state.isAnimating ? 'none' : 'auto',
+                        // Mobile responsiveness
+                        maxWidth: window.innerWidth < 640 ? '100%' : 'none',
+                        maxHeight: window.innerWidth < 640 ? '100%' : 'none'
                     }}
-                    className={`${this.state.cursorType} ${this.state.closed ? "closed-window" : ""} ${this.state.maximized ? "maximized rounded-none" : "rounded-xl"} ${this.props.minimized ? "opacity-0 invisible" : ""} opened-window overflow-hidden min-w-1/4 min-h-1/4 main-window absolute flex flex-col backdrop-blur-xl`}
+                    className={`${this.state.cursorType} ${this.state.closed ? "closed-window" : ""} ${this.state.maximized ? "maximized rounded-none" : ""} ${this.props.minimized ? "opacity-0 invisible" : ""} opened-window overflow-hidden ${window.innerWidth < 640 ? 'min-w-full min-h-full' : 'min-w-1/4 min-h-1/4'} main-window absolute flex flex-col ubuntu-window gpu-accelerated`}
                     id={this.id}
                 >
                     <WindowYBorder resize={this.handleHorizontalResize} />
@@ -363,9 +370,15 @@ export class Window extends Component {
                                             backgroundOpacity={this.props.backgroundOpacity}
                                             changeBackgroundOpacity={this.props.changeBackgroundOpacity}
                                         />
-                                        : <WindowMainScreen screen={this.props.screen} title={this.props.title}
+                                        : <WindowMainScreen 
+                                            screen={this.props.screen} 
+                                            title={this.props.title}
                                             addFolder={this.props.id === "terminal" ? this.props.addFolder : null}
-                                            openApp={this.props.openApp} />)}
+                                            openApp={this.props.openApp}
+                                            projectsData={this.props.projectsData}
+                                            skillsData={this.props.skillsData}
+                                            aboutData={this.props.aboutData}
+                                          />)}
                 </div>
             </Draggable >
         )
@@ -374,56 +387,27 @@ export class Window extends Component {
 
 export default Window
 
-// Window's title bar with pure glassy background
+// Window's title bar - Ubuntu style (minimal, clean)
 export function WindowTopBar(props) {
     return (
         <div 
-            className="window-drag-handle relative backdrop-blur-xl border-b py-2.5 px-4 text-white w-full select-none rounded-t-xl cursor-move"
+            className="window-drag-handle ubuntu-title-bar cursor-move"
             style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(20px) saturate(180%)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                WebkitBackdropFilter: 'blur(20px) saturate(180%)', // Safari support
-                minHeight: '42px', // Ensure consistent height for controls positioning
+                minHeight: '36px', // Ubuntu style - compact
             }}
         >
-            {/* Pure glass overlay for extra depth */}
+            {/* Title text - Ubuntu Mono font, minimal styling */}
             <div 
-                className="absolute inset-0 rounded-t-xl"
+                className="title"
                 style={{
-                    background: `linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.1) 0%, 
-                        rgba(255, 255, 255, 0.05) 50%, 
-                        rgba(255, 255, 255, 0.1) 100%)`,
-                }}
-            />
-            
-            {/* Title text with Linux font and theme color */}
-            <div 
-                className="flex justify-center text-sm font-bold relative z-10 tracking-wide"
-                style={{
-                    fontFamily: '"Ubuntu Mono", "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace',
-                    color: 'var(--text-primary)',
-                    textShadow: '0 1px 3px rgba(0,0,0,0.5), 0 0 10px var(--accent-glow)/30',
-                    letterSpacing: '0.5px'
+                    fontFamily: '"Ubuntu Mono", "Fira Code", monospace',
+                    color: '#FFFFFF',
+                    fontSize: '13px',
+                    fontWeight: '500',
                 }}
             >
                 {props.title}
             </div>
-
-            {/* Glass reflection effect */}
-            <div 
-                className="absolute top-0 left-4 right-4 h-px"
-                style={{
-                    background: `linear-gradient(90deg, 
-                        transparent 0%, 
-                        rgba(255, 255, 255, 0.3) 20%, 
-                        rgba(255, 255, 255, 0.6) 50%, 
-                        rgba(255, 255, 255, 0.3) 80%, 
-                        transparent 100%)`,
-                    filter: 'blur(0.5px)'
-                }}
-            />
         </div>
     )
 }
@@ -623,7 +607,15 @@ export class WindowMainScreen extends Component {
                 }}
             >
                 <div className="p-2 min-h-full">
-                    {this.props.addFolder ? displayTerminal(this.props.addFolder, this.props.openApp) : this.props.screen(this.props)}
+                    {this.props.addFolder 
+                      ? displayTerminal(this.props.addFolder, this.props.openApp) 
+                      : this.props.screen({
+                          ...this.props,
+                          projectsData: this.props.projectsData,
+                          skillsData: this.props.skillsData,
+                          aboutData: this.props.aboutData,
+                        })
+                    }
                 </div>
             </div>
         )
