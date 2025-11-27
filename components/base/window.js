@@ -77,26 +77,27 @@ export class Window extends Component {
         const windowIndex = this.props.windowIndex || 0;
         const isMobile = window.innerWidth < 640;
         
-        // Cascade offset - smaller on mobile
-        const cascadeOffset = isMobile ? 10 : 30;
+        // Cascade offset - more noticeable offset for better visual stacking
+        const cascadeOffsetX = isMobile ? 15 : 40;  // Right offset
+        const cascadeOffsetY = isMobile ? 15 : 40;  // Bottom offset
         
         // Base position - left side on desktop, centered on mobile
         const baseX = isMobile ? 10 : 50;  // Left side positioning
         const baseY = isMobile ? 60 : 80;   // Top positioning
         
-        // Calculate final position with cascade
-        this.startX = baseX + (windowIndex * cascadeOffset);
-        this.startY = baseY + (windowIndex * cascadeOffset);
+        // Calculate final position with cascade (offset right and bottom)
+        this.startX = baseX + (windowIndex * cascadeOffsetX);
+        this.startY = baseY + (windowIndex * cascadeOffsetY);
         
         // Prevent windows from going off-screen
-        const maxX = isMobile ? window.innerWidth * 0.05 : window.innerWidth * 0.3;  // Keep on left side
-        const maxY = isMobile ? window.innerHeight * 0.1 : window.innerHeight * 0.3;
+        const maxX = isMobile ? window.innerWidth * 0.5 : window.innerWidth * 0.6;  // Allow more right movement
+        const maxY = isMobile ? window.innerHeight * 0.5 : window.innerHeight * 0.6;  // Allow more bottom movement
         
         if (this.startX > maxX) {
-            this.startX = baseX;
+            this.startX = baseX + ((windowIndex % 3) * cascadeOffsetX);  // Reset after 3 windows
         }
         if (this.startY > maxY) {
-            this.startY = baseY;
+            this.startY = baseY + ((windowIndex % 3) * cascadeOffsetY);  // Reset after 3 windows
         }
     }
 
@@ -144,6 +145,9 @@ export class Window extends Component {
                     width: Math.max(0, parent.offsetWidth - windowWidth),
                     height: Math.max(0, parent.offsetHeight - windowHeight - taskbarHeight)
                 }
+            }, () => {
+                // Update Draggable bounds after state update
+                this.forceUpdate();
             });
         } else {
             // Fallback calculation
@@ -343,8 +347,8 @@ export class Window extends Component {
                 bounds={{ 
                     left: 0, 
                     top: 0, 
-                    right: Math.max(0, this.state.parentSize.width - (window.innerWidth * this.state.width / 100)), 
-                    bottom: Math.max(0, this.state.parentSize.height - (window.innerHeight * this.state.height / 100))
+                    right: Math.max(0, this.state.parentSize.width), 
+                    bottom: Math.max(0, this.state.parentSize.height)
                 }}
                 disabled={this.state.maximized || this.state.isAnimating}
             >
@@ -374,9 +378,9 @@ export class Window extends Component {
                     className={`${this.state.cursorType} ${this.state.closed ? "closed-window" : ""} ${this.state.maximized ? "maximized rounded-none" : ""} ${this.props.minimized ? "opacity-0 invisible" : ""} opened-window overflow-hidden ${window.innerWidth < 640 ? 'min-w-full min-h-full' : 'min-w-1/4 min-h-1/4'} main-window absolute flex flex-col ubuntu-window gpu-accelerated`}
                     id={this.id}
                 >
+                    <WindowTopBar title={this.props.title} />
                     <WindowYBorder resize={this.handleHorizontalResize} />
                     <WindowXBorder resize={this.handleVerticleResize} />
-                    <WindowTopBar title={this.props.title} />
                     <WindowEditButtons 
                         minimize={this.minimizeWindow} 
                         maximize={this.maximizeWindow} 
@@ -417,9 +421,13 @@ export default Window
 export function WindowTopBar(props) {
     return (
         <div 
-            className="window-drag-handle ubuntu-title-bar cursor-move"
+            className="window-drag-handle ubuntu-title-bar"
             style={{
                 minHeight: '36px', // Ubuntu style - compact
+                cursor: 'move',
+                position: 'relative',
+                zIndex: 100,  // Higher than resize borders
+                userSelect: 'none',
             }}
         >
             {/* Title text - Ubuntu Mono font, minimal styling */}
@@ -430,6 +438,7 @@ export function WindowTopBar(props) {
                     color: '#FFFFFF',
                     fontSize: '13px',
                     fontWeight: '500',
+                    pointerEvents: 'none',  // Allow dragging through text
                 }}
             >
                 {props.title}
@@ -447,7 +456,17 @@ export class WindowYBorder extends Component {
     }
     render() {
         return (
-            <div className=" window-y-border border-transparent border-1 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" onDragStart={(e) => { e.dataTransfer.setDragImage(this.trpImg, 0, 0) }} onDrag={this.props.resize}>
+            <div 
+                className="window-y-border border-transparent border-1 absolute right-0 top-0 bottom-0" 
+                style={{
+                    width: '4px',
+                    cursor: 'ew-resize',
+                    zIndex: 50,  // Lower than title bar
+                    pointerEvents: 'auto',
+                }}
+                onDragStart={(e) => { e.dataTransfer.setDragImage(this.trpImg, 0, 0) }} 
+                onDrag={this.props.resize}
+            >
             </div>
         )
     }
@@ -461,7 +480,17 @@ export class WindowXBorder extends Component {
     }
     render() {
         return (
-            <div className=" window-x-border border-transparent border-1 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" onDragStart={(e) => { e.dataTransfer.setDragImage(this.trpImg, 0, 0) }} onDrag={this.props.resize}>
+            <div 
+                className="window-x-border border-transparent border-1 absolute bottom-0 left-0 right-0" 
+                style={{
+                    height: '4px',
+                    cursor: 'ns-resize',
+                    zIndex: 50,  // Lower than title bar
+                    pointerEvents: 'auto',
+                }}
+                onDragStart={(e) => { e.dataTransfer.setDragImage(this.trpImg, 0, 0) }} 
+                onDrag={this.props.resize}
+            >
             </div>
         )
     }
@@ -470,15 +499,19 @@ export class WindowXBorder extends Component {
 // Window's Edit Buttons with improved positioning
 export function WindowEditButtons(props) {
     return (
-        <div className="absolute select-none right-2 top-2 flex justify-center items-center space-x-1.5 z-50">
+        <div 
+            className="absolute select-none right-2 top-2 flex justify-center items-center space-x-1.5"
+            style={{ zIndex: 150 }}  // Higher than title bar (100) to ensure visibility
+        >
             {/* Minimize Button */}
             <span 
                 className={`bg-gray-700/40 backdrop-blur-sm hover:scale-110 rounded-full flex justify-center h-7 w-7 items-center transition-all duration-200 cursor-pointer group ${props.disabled ? 'pointer-events-none opacity-50' : ''}`}
                 onClick={props.disabled ? undefined : props.minimize}
                 style={{
-                    backgroundColor: 'rgba(75, 85, 99, 0.4)',
+                    backgroundColor: 'rgba(75, 85, 99, 0.7)',  // More opaque for better visibility
                     border: '1px solid var(--accent-primary)/30',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    zIndex: 151  // Ensure buttons are on top
                 }}
                 onMouseEnter={!props.disabled ? (e) => {
                     e.currentTarget.style.backgroundColor = 'var(--accent-primary)/20';
@@ -486,9 +519,9 @@ export function WindowEditButtons(props) {
                     e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)/40';
                 } : undefined}
                 onMouseLeave={!props.disabled ? (e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(75, 85, 99, 0.4)';
+                    e.currentTarget.style.backgroundColor = 'rgba(75, 85, 99, 0.7)';  // Match the updated default
                     e.currentTarget.style.borderColor = 'var(--accent-primary)/30';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
                 } : undefined}
             >
                 <img
@@ -577,7 +610,8 @@ export function WindowEditButtons(props) {
                 style={{
                     backgroundColor: 'var(--accent-primary)/80',
                     border: '1px solid var(--accent-primary)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 1px var(--accent-primary)/30'
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 1px var(--accent-primary)/30',
+                    zIndex: 151  // Ensure close button is on top
                 }}
                 onMouseEnter={!props.disabled ? (e) => {
                     e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
