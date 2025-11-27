@@ -325,7 +325,30 @@ renderGlassyTaskbarApps = () => {
 
       taskbarApps.push(
         <button
-          key={app.id}
+          key={`${app.id}-${isOpen}-${isFocused}`}
+          ref={(el) => {
+            // Reset styles whenever component re-renders (e.g., when app closes)
+            // This ensures hover effects are cleared even if mouse is still over button
+            if (el) {
+              const currentBg = isOpen && isFocused 
+                ? hexToRgba(themeColor, 0.2) 
+                : isOpen 
+                ? 'rgba(255, 255, 255, 0.08)' 
+                : 'transparent';
+              const currentBorder = isOpen && isFocused 
+                ? `1px solid ${hexToRgba(themeColor, 0.4)}` 
+                : '1px solid transparent';
+              
+              // Only update if styles don't match (to avoid unnecessary DOM updates)
+              if (el.style.backgroundColor !== currentBg || 
+                  el.style.borderColor !== currentBorder ||
+                  el.style.boxShadow !== 'none') {
+                el.style.backgroundColor = currentBg;
+                el.style.borderColor = currentBorder;
+                el.style.boxShadow = 'none';
+              }
+            }
+          }}
           onClick={() => {
             this.openApp(app.id);
             if (isOpen) {
@@ -345,6 +368,7 @@ renderGlassyTaskbarApps = () => {
               ? `1px solid ${hexToRgba(themeColor, 0.4)}` 
               : '1px solid transparent',
             backdropFilter: 'blur(10px)',
+            boxShadow: 'none',
           }}
           onMouseEnter={(e) => {
             if (!isOpen || !isFocused) {
@@ -354,11 +378,19 @@ renderGlassyTaskbarApps = () => {
             }
           }}
           onMouseLeave={(e) => {
-            if (!isOpen || !isFocused) {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.borderColor = 'transparent';
-              e.currentTarget.style.boxShadow = 'none';
-            }
+            // Always reset on mouse leave, regardless of state
+            const shouldBeTransparent = !isOpen && !isFocused;
+            e.currentTarget.style.backgroundColor = shouldBeTransparent 
+              ? 'transparent' 
+              : (isOpen && isFocused 
+                ? hexToRgba(themeColor, 0.2) 
+                : 'rgba(255, 255, 255, 0.08)');
+            e.currentTarget.style.borderColor = shouldBeTransparent 
+              ? 'transparent' 
+              : (isOpen && isFocused 
+                ? `1px solid ${hexToRgba(themeColor, 0.4)}` 
+                : '1px solid transparent');
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           {/* Icon Container */}

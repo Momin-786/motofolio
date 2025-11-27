@@ -444,38 +444,48 @@ echo "Current system: Ubuntu 22.04 LTS"`,
   };
 
   const listDirectory = (path) => {
-    const item = fileSystem[path];
-    if (!item || item.type !== "directory") {
+    try {
+      const item = fileSystem[path];
+      if (!item || item.type !== "directory") {
+        return null;
+      }
+
+      if (!item.children || !Array.isArray(item.children)) {
+        return [];
+      }
+
+      return item.children.map((child) => {
+        const childPath = path === "/" ? `/${child}` : `${path}/${child}`;
+        const childItem = fileSystem[childPath];
+        const isDir = childItem && childItem.type === "directory";
+
+        return {
+          name: child,
+          type: isDir ? "directory" : "file",
+          color: isDir
+            ? "text-blue-400"
+            : child.endsWith(".txt")
+            ? "text-green-400"
+            : "text-gray-300",
+        };
+      });
+    } catch (error) {
+      console.error('Error listing directory:', error);
       return null;
     }
-
-    return item.children.map((child) => {
-      const childPath = path === "/" ? `/${child}` : `${path}/${child}`;
-      const childItem = fileSystem[childPath];
-      const isDir = childItem && childItem.type === "directory";
-
-      return {
-        name: child,
-        type: isDir ? "directory" : "file",
-        color: isDir
-          ? "text-blue-400"
-          : child.endsWith(".txt")
-          ? "text-green-400"
-          : "text-gray-300",
-      };
-    });
   };
 
   const executeCommand = (cmd) => {
-    const trimmed = cmd.trim();
-    if (!trimmed) return;
+    try {
+      const trimmed = cmd.trim();
+      if (!trimmed) return;
 
-    setCommandHistory((prev) => [...prev, trimmed]);
-    setHistoryIndex(-1);
+      setCommandHistory((prev) => [...prev, trimmed]);
+      setHistoryIndex(-1);
 
-    const [command, ...args] = trimmed.split(" ");
+      const [command, ...args] = trimmed.split(" ");
 
-    switch (command) {
+      switch (command) {
       case "help":
         addToHistory(
           trimmed,
@@ -804,6 +814,15 @@ Portfolio URL: <span class="text-blue-400 underline cursor-pointer" onclick="win
           `${command}: command not found\nType 'help' to see available commands`,
           true
         );
+        break;
+      }
+    } catch (error) {
+      console.error('Terminal command error:', error);
+      addToHistory(
+        cmd.trim(),
+        `Error executing command: ${error.message}`,
+        true
+      );
     }
   };
 
