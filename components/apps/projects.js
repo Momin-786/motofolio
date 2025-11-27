@@ -146,7 +146,7 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
                     <Search className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 text-[#808080] z-10 pointer-events-none" />
                     <input
                       type="text"
-                      placeholder="Search projects..."
+                      placeholder="    Search projects..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="ubuntu-input pl-8 md:pl-10 text-xs md:text-sm relative z-0"
