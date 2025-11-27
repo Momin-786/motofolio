@@ -23,7 +23,7 @@ export default class Ubuntu extends Component {
 	setTimeOutBootScreen = () => {
 		setTimeout(() => {
 			this.setState({ booting_screen: false });
-		}, 8000); // Increased from 6000ms to 8000ms (8 seconds)
+		}, 6000); // Show booting screen for 5 seconds
 	};
 
 	getLocalData = () => {
@@ -33,20 +33,15 @@ export default class Ubuntu extends Component {
 			this.setState({ bg_image_name });
 		}
 
-		let booting_screen = localStorage.getItem('booting_screen');
-		if (booting_screen !== null && booting_screen !== undefined) {
-			// user has visited site before
-			this.setState({ booting_screen: false });
-		} else {
-			// user is visiting site for the first time
-			localStorage.setItem('booting_screen', false);
-			this.setTimeOutBootScreen();
-		}
+		// Always show booting screen on page load for 3-4 seconds
+		this.setState({ booting_screen: true });
+		this.setTimeOutBootScreen();
 
 		// get shutdown state
 		let shut_down = localStorage.getItem('shut-down');
-		if (shut_down !== null && shut_down !== undefined && shut_down === 'true') this.shutDown();
-		else {
+		if (shut_down !== null && shut_down !== undefined && shut_down === 'true') {
+			this.shutDown();
+		} else {
 			// Get previous lock screen state
 			let screen_locked = localStorage.getItem('screen-locked');
 			if (screen_locked !== null && screen_locked !== undefined) {
