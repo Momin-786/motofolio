@@ -46,18 +46,13 @@ const ContactApp = ({ onClose }) => {
 
   const fetchContactData = async () => {
     try {
-      const response = await fetch('/api/about');
+      // Fetch contact info from dedicated endpoint
+      const response = await fetch('/api/contact-info');
       const data = await response.json();
       if (data.success && data.data) {
-        // Filter contact type data
-        const contactData = data.data.filter(item => item.type === 'contact');
-        setContactInfo(contactData);
-        
-        // Get availability from about data if available
-        const availabilityData = data.data.find(item => item.type === 'availability');
-        if (availabilityData) {
-          setAvailability(availabilityData);
-        }
+        setContactInfo(data.data);
+      } else {
+        setContactInfo([]);
       }
     } catch (error) {
       console.error('Error fetching contact data:', error);
@@ -73,15 +68,40 @@ const ContactApp = ({ onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      alert("Please fill in all fields");
+      return;
+    }
+
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        alert(data.error || 'Failed to send message. Please try again.');
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('An error occurred while sending your message. Please try again.');
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    }, 2000);
+    }
   };
 
   const copyToClipboard = (text, field) => {
@@ -178,7 +198,7 @@ const ContactApp = ({ onClose }) => {
                 <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Contact Information</h2>
                 
                 {contactInfo.length > 0 ? contactInfo.map((contact, index) => {
-                  const iconMap = { Mail, Phone, Github, Linkedin, MapPin };
+                  const iconMap = { Mail, Phone, Github, Linkedin, MapPin, Globe };
                   const IconComponent = typeof contact.icon === 'string' 
                     ? iconMap[contact.icon] || Mail 
                     : (contact.icon || Mail);
@@ -258,7 +278,7 @@ const ContactApp = ({ onClose }) => {
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <form onSubmit={handleSubmit} className="space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                       <div>
                         <label className="block text-xs font-medium text-[#B3B3B3] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
@@ -326,7 +346,7 @@ const ContactApp = ({ onClose }) => {
                     </div>
 
                     <button
-                      onClick={handleSubmit}
+                      type="submit"
                       disabled={isSubmitting}
                       className="ubuntu-button primary w-full flex items-center justify-center gap-2 text-sm"
                     >
@@ -342,7 +362,7 @@ const ContactApp = ({ onClose }) => {
                         </>
                       )}
                     </button>
-                  </div>
+                  </form>
                 )}
                 
                 <div className="ubuntu-card p-3">

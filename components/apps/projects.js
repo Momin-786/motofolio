@@ -249,7 +249,13 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
             <div className="relative flex-shrink-0 bg-[#2D2D2D] border-b border-[#3D3D3D] p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {React.createElement(IconComponent, { className: "w-8 h-8 text-[#E95420]" })}
+                  {(() => {
+                    // Handle icon - can be component or string
+                    const IconComponent = typeof selectedProject.icon === 'string' 
+                      ? iconMap[selectedProject.icon] || Code 
+                      : selectedProject.icon || Code;
+                    return <IconComponent className="w-8 h-8 text-[#E95420]" />;
+                  })()}
                   <div>
                     <h1 className="text-base font-medium text-white mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
                       {selectedProject.name}

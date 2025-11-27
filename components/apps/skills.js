@@ -163,7 +163,7 @@ const SkillsApp = ({ onClose, skillsData: propsSkillsData = [] }) => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#808080]" />
             <input
               type="text"
-              placeholder={`Search in ${currentCategory.name}...`}
+              placeholder={`   Search in ${currentCategory.name}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="ubuntu-input pl-10"

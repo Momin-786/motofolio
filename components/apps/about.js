@@ -46,23 +46,68 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
       education: null,
       achievements: [],
       approach: [],
-      contact: [],
       stats: []
     };
 
     data.forEach(section => {
-      if (section.type === 'overview') {
-        result.overview = section;
-      } else if (section.type === 'education') {
-        result.education = section;
-      } else if (section.type === 'achievement') {
-        result.achievements.push(section);
-      } else if (section.type === 'approach') {
-        result.approach.push(section);
-      } else if (section.type === 'contact') {
-        result.contact.push(section);
-      } else if (section.type === 'stat') {
-        result.stats.push(section);
+      // MongoDB uses 'section' field, not 'type'
+      const sectionType = section.section || section.type;
+
+      if (sectionType === 'overview') {
+        // Merge content object into section for easier access
+        const sectionData = section.content 
+          ? { ...section, ...section.content }
+          : section;
+        result.overview = sectionData;
+      } else if (sectionType === 'education') {
+        // Merge content object into section for easier access
+        const sectionData = section.content 
+          ? { ...section, ...section.content }
+          : section;
+        result.education = sectionData;
+      } else if (sectionType === 'achievement' || sectionType === 'achievements') {
+        // Achievements section has content.items array
+        if (section.content && section.content.items && Array.isArray(section.content.items)) {
+          // Add each item from the items array
+          section.content.items.forEach(item => {
+            result.achievements.push({
+              title: item.title,
+              description: item.description,
+              ...item
+            });
+          });
+        } else {
+          // Fallback: treat section itself as achievement
+          const sectionData = section.content 
+            ? { ...section, ...section.content }
+            : section;
+          result.achievements.push(sectionData);
+        }
+      } else if (sectionType === 'approach') {
+        // Approach section has content.steps array
+        if (section.content && section.content.steps && Array.isArray(section.content.steps)) {
+          // Add each step from the steps array
+          section.content.steps.forEach(step => {
+            result.approach.push({
+              step: step.step,
+              title: step.title,
+              description: step.description,
+              order: parseInt(step.step) || step.order,
+              ...step
+            });
+          });
+        } else {
+          // Fallback: treat section itself as approach step
+          const sectionData = section.content 
+            ? { ...section, ...section.content }
+            : section;
+          result.approach.push(sectionData);
+        }
+      } else if (sectionType === 'stat' || sectionType === 'stats') {
+        const sectionData = section.content 
+          ? { ...section, ...section.content }
+          : section;
+        result.stats.push(sectionData);
       }
     });
 
@@ -107,17 +152,11 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
       name: "Work Approach",
       icon: Target,
       color: ""
-    },
-    contact: {
-      name: "Contact",
-      icon: Mail,
-      color: ""
     }
   };
 
   // Use data from MongoDB or empty defaults
   const stats = aboutData?.stats || [];
-  const contactInfo = aboutData?.contact || [];
   const workApproach = aboutData?.approach || [];
   const achievements = aboutData?.achievements || [];
   const education = aboutData?.education || null;
@@ -214,7 +253,7 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
             <span>{overview.title || "About Me"}</span>
           </h3>
           <div className="space-y-3 text-[#B3B3B3] text-xs leading-relaxed" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
-            {overview.content ? (
+            {overview.content && typeof overview.content === 'string' ? (
               <div dangerouslySetInnerHTML={{ __html: overview.content.replace(/\n/g, '<br>') }} />
             ) : (
               <p>{overview.description || "No information available."}</p>
@@ -251,7 +290,7 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h4 className="text-lg font-bold text-white">{education.degree || education.institution || "Education"}</h4>
-                <p className="text-[#B3B3B3] font-medium">{education.institution || education.school || ""}</p>
+                <p className="text-[#B3B3B3] font-medium">{education.university || education.institution || education.school || ""}</p>
                 {education.period && (
                   <div className="flex items-center gap-2 mt-1 text-sm text-[#808080]">
                     <Calendar className="w-4 h-4" />
@@ -269,6 +308,20 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
                 </div>
               )}
             </div>
+            
+            {education.achievements && education.achievements.length > 0 && (
+              <div className="mt-6">
+                <h5 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Achievements</h5>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {education.achievements.map((achievement, index) => (
+                    <div key={index} className="text-center">
+                      <TrendingUp className="w-6 h-6 text-[#B3B3B3] mx-auto mb-2" />
+                      <div className="text-sm text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{achievement}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             
             {education.highlights && education.highlights.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -307,6 +360,10 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
             ? iconMap[achievement.icon] || Award 
             : (achievement.icon || Award);
 
+          // Extract title and description directly from achievement object
+          const achievementTitle = achievement.title || achievement.name || "";
+          const achievementDescription = achievement.description || "";
+
           return (
             <div key={index} className="ubuntu-card p-6">
               <div className="flex items-start gap-4">
@@ -314,9 +371,9 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
                   <IconComponent className="w-6 h-6 text-[#E95420]" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-white mb-2">{achievement.title || achievement.name}</h4>
+                  <h4 className="text-lg font-bold text-white mb-2">{achievementTitle}</h4>
                   <p className="text-[#808080] text-sm leading-relaxed" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
-                    {achievement.description || achievement.content || ""}
+                    {achievementDescription}
                   </p>
                 </div>
               </div>
@@ -350,6 +407,11 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
               ? iconMap[step.icon] || Target 
               : (step.icon || Target);
 
+            // Extract step data directly from step object
+            const stepTitle = step.title || step.name || "";
+            const stepDescription = step.description || "";
+            const stepOrder = step.step || step.order || index + 1;
+
             return (
               <div key={index} className="group ubuntu-card p-6">
                 <div className="flex items-start gap-4">
@@ -359,12 +421,12 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-sm font-bold px-2 py-1 rounded border bg-[#2D2D2D] text-[#B3B3B3] border-[#3D3D3D]">
-                        {step.step || step.order || `0${index + 1}`}
+                        {stepOrder < 10 ? `0${stepOrder}` : stepOrder}
                       </span>
-                      <h4 className="text-lg font-bold text-white">{step.title || step.name}</h4>
+                      <h4 className="text-lg font-bold text-white">{stepTitle}</h4>
                     </div>
                     <p className="text-[#808080] text-sm leading-relaxed" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
-                      {step.description || step.content || ""}
+                      {stepDescription}
                     </p>
                   </div>
                   <ChevronRight className="w-5 h-5 text-[#808080] group-hover:text-[#B3B3B3] transition-colors" />
@@ -377,50 +439,6 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
     );
   };
 
-  const renderContact = () => {
-    if (!contactInfo || contactInfo.length === 0) {
-      return (
-        <div className="text-center py-10">
-          <p className="text-[#808080]" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>No contact information available</p>
-        </div>
-      );
-    }
-
-    const iconMap = { Mail, Phone, Github, Linkedin, Globe };
-    
-    return (
-      <div className="space-y-4">
-        {contactInfo.map((contact, index) => {
-          const IconComponent = typeof contact.icon === 'string' 
-            ? iconMap[contact.icon] || Mail 
-            : (contact.icon || Mail);
-
-          return (
-            <a
-              key={index}
-              href={contact.href || contact.link || "#"}
-              target={contact.label !== "Email" && contact.label !== "Phone" ? "_blank" : undefined}
-              rel={contact.label !== "Email" && contact.label !== "Phone" ? "noopener noreferrer" : undefined}
-              className="block group ubuntu-card p-6"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#2D2D2D] border border-[#3D3D3D] rounded flex items-center justify-center">
-                  <IconComponent className="w-6 h-6 text-[#E95420]" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-lg font-bold text-white mb-1">{contact.label || contact.name}</h4>
-                  <p className="text-[#808080] text-sm group-hover:text-[#B3B3B3] transition-colors" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
-                    {contact.value || contact.content || ""}
-                  </p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-[#808080] group-hover:text-[#B3B3B3] transition-colors" />
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    );
-  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -432,8 +450,6 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
         return renderAchievements();
       case "approach":
         return renderApproach();
-      case "contact":
-        return renderContact();
       default:
         return renderOverview();
     }
