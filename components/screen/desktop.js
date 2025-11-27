@@ -930,20 +930,22 @@ renderGlassyTaskbarApps = () => {
         className={`h-screen w-screen bg-gray-900 text-gray-100 relative overflow-hidden theme-${this.state.currentTheme}`}
         style={{
           fontFamily: "var(--font-sans)",
-          backgroundColor: "var(--bg-primary)",
+          backgroundColor: this.props.hideBackground ? "transparent" : "var(--bg-primary)",
           color: "var(--text-primary)",
         }}
       >
         {/* Background Image with Opacity Control - UPDATED */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            opacity: this.state.backgroundOpacity / 100,
-            transition: "opacity 0.3s ease-in-out",
-          }}
-        >
-          <BackgroundImage img={this.props.bg_image_name} />
-        </div>
+        {!this.props.hideBackground && (
+          <div
+            className="absolute inset-0 z-0"
+            style={{
+              opacity: this.state.backgroundOpacity / 100,
+              transition: "opacity 0.3s ease-in-out",
+            }}
+          >
+            <BackgroundImage img={this.props.bg_image_name} onLoad={this.props.onBackgroundLoad} />
+          </div>
+        )}
 
         {/* Desktop Area - Full height for windows - Responsive */}
         <div className="h-[calc(100vh-80px)] md:h-[calc(100vh-100px)] relative z-10">
@@ -975,10 +977,11 @@ renderGlassyTaskbarApps = () => {
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
               width: "auto",
               minWidth: "fit-content",
+              maxWidth: "100%",
             }}
           >
             {/* Centered: App Icons Only */}
-            <div className="flex items-center space-x-1 md:space-x-2 px-1 md:px-2 overflow-x-auto ubuntu-scrollbar justify-center">
+            <div className="flex items-center space-x-1 md:space-x-2 px-1 md:px-2 overflow-x-auto md:overflow-x-visible md:overflow-y-visible justify-center scrollbar-hide flex-nowrap">
               {this.renderGlassyTaskbarApps()}
             </div>
             

@@ -58,7 +58,7 @@ export default function BackgroundImage(props) {
         const imageStyles = {
         ...commonStyles,
         opacity: mediaLoaded ? 1 : 0,
-        transition: 'opacity 0.5s ease-in-out',
+        transition: mediaLoaded ? 'opacity 0.3s ease-in-out' : 'none',
         zIndex: mediaLoaded ? 2 : 1,
         // Apply dark filter for wall-2 (random Picsum images)
         filter: shouldDarken ? 'brightness(0.6) contrast(1.1) saturate(0.9)' : 'none'
@@ -74,10 +74,11 @@ export default function BackgroundImage(props) {
 
     return (
         <div style={containerStyle} className="bg-ubuntu-media absolute top-0 left-0 overflow-hidden h-full w-full">
-            {/* Always show fallback gradient first */}
+            {/* Always show fallback gradient first - matches boot screen */}
             <div style={{
                 ...commonStyles,
-                background: "linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)",
+                background: "var(--bg-primary)",
+                backgroundColor: "var(--bg-primary)",
                 zIndex: 0
             }} />
 
@@ -97,8 +98,10 @@ export default function BackgroundImage(props) {
                              filter: shouldDarken ? 'brightness(0.6) contrast(1.1) saturate(0.9)' : 'none'
                         }}
                         onLoadedData={() => {
-                            
                             setMediaLoaded(true);
+                            if (props.onLoad) {
+                                props.onLoad();
+                            }
                         }}
                         onError={(e) => {
                           
@@ -117,8 +120,10 @@ export default function BackgroundImage(props) {
                         alt="Desktop Background"
                         style={imageStyles}
                         onLoad={() => {
-                          
                             setMediaLoaded(true);
+                            if (props.onLoad) {
+                                props.onLoad();
+                            }
                         }}
                         onError={(e) => {
                       

@@ -3,6 +3,7 @@ import BootingScreen from './screen/booting_screen';
 import Desktop from './screen/desktop';
 import LockScreen from './screen/lock_screen';
 import Navbar from './screen/navbar';
+import BackgroundImage from './util components/background-image';
 import ReactGA from 'react-ga4';
 
 export default class Ubuntu extends Component {
@@ -23,7 +24,7 @@ export default class Ubuntu extends Component {
 	setTimeOutBootScreen = () => {
 		setTimeout(() => {
 			this.setState({ booting_screen: false });
-		}, 6000); // Show booting screen for 5 seconds
+		}, 5000); // Show booting screen for 5 seconds
 	};
 
 	getLocalData = () => {
@@ -115,9 +116,39 @@ export default class Ubuntu extends Component {
 					turnOn={this.turnOn}
 				/>
 				
-				{/* Only render Navbar and Desktop when not booting and not shut down */}
-				{!this.state.booting_screen && !this.state.shutDownScreen && (
-					<>
+				{/* Background Image - Always visible, loads during boot - Lowest z-index */}
+				{!this.state.shutDownScreen && (
+					<div 
+						style={{ 
+							position: 'fixed', 
+							top: 0, 
+							left: 0, 
+							width: '100vw', 
+							height: '100vh', 
+							zIndex: -1,
+							pointerEvents: 'none'
+						}}
+					>
+						<BackgroundImage img={this.state.bg_image_name} />
+					</div>
+				)}
+				
+				{/* Render Desktop - hidden during boot, visible after */}
+				{!this.state.shutDownScreen && (
+					<div 
+						style={{ 
+							position: 'absolute', 
+							top: 0, 
+							left: 0, 
+							width: '100%', 
+							height: '100%', 
+							zIndex: 1,
+							opacity: this.state.booting_screen ? 0 : 1,
+							transition: 'opacity 0.4s ease-in-out',
+							pointerEvents: this.state.booting_screen ? 'none' : 'auto',
+							backgroundColor: 'transparent'
+						}}
+					>
 						<Navbar lockScreen={this.lockScreen} shutDown={this.shutDown} />
 						<Desktop 
 							bg_image_name={this.state.bg_image_name} 
@@ -125,8 +156,9 @@ export default class Ubuntu extends Component {
 							projectsData={this.props.projectsData}
 							skillsData={this.props.skillsData}
 							aboutData={this.props.aboutData}
+							hideBackground={true}
 						/>
-					</>
+					</div>
 				)}
 			</div>
 		);

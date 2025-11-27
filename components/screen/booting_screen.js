@@ -42,7 +42,8 @@ function BootingScreen(props) {
             style={{
                 ...(props.visible || props.isShutDown ? { zIndex: "100" } : { zIndex: "-20" }),
                 fontFamily: '"Ubuntu Mono", "Courier New", monospace',
-                backgroundColor: 'var(--bg-primary)'
+                backgroundColor: props.visible && !props.isShutDown ? 'rgba(13, 17, 23, 0.85)' : 'var(--bg-primary)',
+                backdropFilter: props.visible && !props.isShutDown ? 'blur(2px)' : 'none'
             }}
             className={(props.visible || props.isShutDown ? " visible opacity-100" : " invisible opacity-0 ") + " absolute duration-500 select-none flex flex-col justify-center items-center top-0 right-0 overflow-hidden m-0 p-0 h-screen w-screen"}
         >
