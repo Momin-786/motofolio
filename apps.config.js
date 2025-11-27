@@ -1,7 +1,6 @@
 
 import { displayTerminal } from './components/apps/terminal';
 import { displaySettings } from './components/apps/settings';
-import { displayChrome } from './components/apps/chrome';
 import { displayGedit } from './components/apps/gedit';
 import { displayTerminalCalc } from './components/apps/calc';
 import { displayProjects } from './components/apps/projects';
@@ -10,15 +9,6 @@ import { displayContact } from './components/apps/contact';
 import { displayAbout } from './components/apps/about';
 
 const apps = [
-    {
-        id: "chrome",
-        title: "Google Chrome",
-        icon: './themes/Yaru/apps/chrome.png',
-        disabled: false,
-        favourite: true,
-        desktop_shortcut: true,
-        screen: displayChrome,
-    },
      {
         id: "projects",
         title: "Portfolio Projects",

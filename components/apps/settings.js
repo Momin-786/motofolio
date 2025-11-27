@@ -147,7 +147,19 @@ export function Settings(props) {
             </div>
 
             {/* Main Scrollable Content Container */}
-            <div className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar">
+            <div 
+                className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar" 
+                style={{ 
+                    cursor: 'default', 
+                    pointerEvents: 'auto', 
+                    position: 'relative', 
+                    zIndex: 10,
+                    transform: 'translateZ(0)',
+                    willChange: 'scroll-position',
+                    WebkitOverflowScrolling: 'touch',
+                    overscrollBehavior: 'contain'
+                }}
+            >
             {/* Main Preview - Ubuntu style */}
             <div className="p-3 md:p-4 bg-[#2D2D2D] border-b border-[#3D3D3D]">
                 <div 

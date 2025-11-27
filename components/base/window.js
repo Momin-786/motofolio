@@ -57,16 +57,16 @@ export class Window extends Component {
     animateWindowOpen = () => {
         const windowElement = document.querySelector("#" + this.id);
         if (windowElement) {
-            // Start with scaled down and transparent - GPU accelerated
-            windowElement.style.transform = `translate3d(${this.startX}px, ${this.startY}px, 0) scale(0.8)`;
+            // Start with subtle scale and transparent - GPU accelerated
+            windowElement.style.transform = `translate3d(${this.startX}px, ${this.startY}px, 0) scale(0.95)`;
             windowElement.style.opacity = '0';
             windowElement.style.transition = 'none';
             
-            // Force a reflow
+            // Force a reflow for smooth animation
             windowElement.offsetHeight;
             
-            // GPU-accelerated opening animation
-            windowElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            // Fast, lightweight opening animation - 150ms with ease-out
+            windowElement.style.transition = 'transform 150ms ease-out, opacity 150ms ease-out';
             windowElement.style.transform = `translate3d(${this.startX}px, ${this.startY}px, 0) scale(1)`;
             windowElement.style.opacity = '1';
         }
@@ -80,17 +80,17 @@ export class Window extends Component {
         // Cascade offset - smaller on mobile
         const cascadeOffset = isMobile ? 10 : 30;
         
-        // Base position - centered on mobile, offset on desktop
-        const baseX = isMobile ? 10 : 80;
-        const baseY = isMobile ? 60 : 120;
+        // Base position - left side on desktop, centered on mobile
+        const baseX = isMobile ? 10 : 50;  // Left side positioning
+        const baseY = isMobile ? 60 : 80;   // Top positioning
         
         // Calculate final position with cascade
         this.startX = baseX + (windowIndex * cascadeOffset);
         this.startY = baseY + (windowIndex * cascadeOffset);
         
         // Prevent windows from going off-screen
-        const maxX = isMobile ? window.innerWidth * 0.05 : window.innerWidth * 0.5;
-        const maxY = isMobile ? window.innerHeight * 0.1 : window.innerHeight * 0.4;
+        const maxX = isMobile ? window.innerWidth * 0.05 : window.innerWidth * 0.3;  // Keep on left side
+        const maxY = isMobile ? window.innerHeight * 0.1 : window.innerHeight * 0.3;
         
         if (this.startX > maxX) {
             this.startX = baseX;
@@ -117,31 +117,45 @@ export class Window extends Component {
                 this.setState({ height: 55, width: 45 }, this.resizeBoundries);
             }
         } else {
-            // Default sizing for other windows - full width on mobile
+            // Default sizing for other windows - proper size, not full screen
             if (isMobile) {
                 this.setState({ height: 85, width: 95 }, this.resizeBoundries);
             }
             else if (isTablet) {
-                this.setState({ height: 75, width: 75 }, this.resizeBoundries);
+                this.setState({ height: 70, width: 65 }, this.resizeBoundries);
             }
             else {
-                this.setState({ height: 70, width: 50 }, this.resizeBoundries);
+                // Desktop: reasonable size on left side, not full screen
+                this.setState({ height: 60, width: 40 }, this.resizeBoundries);
             }
         }
     }
 
     resizeBoundries = () => {
-        this.setState({
-            parentSize: {
-                height: window.innerHeight // parent height
-                    - (window.innerHeight * (this.state.height / 100.0))  // this window's height
-                    - 140 // space for top nav bar (60px) + bottom taskbar (80px)
-                ,
-                width: window.innerWidth // parent width
-                    - (window.innerWidth * (this.state.width / 100.0)) //this window's width
-                    - 40 // some margin from edges
-            }
-        });
+        const parent = document.getElementById("desktop-area");
+        if (parent) {
+            // Account for taskbar height (approximately 80px)
+            const taskbarHeight = 80;
+            const windowWidth = window.innerWidth * (this.state.width / 100.0);
+            const windowHeight = window.innerHeight * (this.state.height / 100.0);
+            
+            this.setState({
+                parentSize: {
+                    width: Math.max(0, parent.offsetWidth - windowWidth),
+                    height: Math.max(0, parent.offsetHeight - windowHeight - taskbarHeight)
+                }
+            });
+        } else {
+            // Fallback calculation
+            const windowWidth = window.innerWidth * (this.state.width / 100.0);
+            const windowHeight = window.innerHeight * (this.state.height / 100.0);
+            this.setState({
+                parentSize: {
+                    width: Math.max(0, window.innerWidth - windowWidth - 40),
+                    height: Math.max(0, window.innerHeight - windowHeight - 140)
+                }
+            });
+        }
     }
 
     changeCursorToMove = () => {
@@ -196,8 +210,8 @@ export class Window extends Component {
         
         var r = document.querySelector("#" + this.id);
         if (r) {
-            // GPU-accelerated minimize animation
-            r.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            // Fast, lightweight minimize animation - 150ms
+            r.style.transition = 'transform 150ms ease-in, opacity 150ms ease-in';
             r.style.transformOrigin = 'center bottom';
             r.style.transform = `translate3d(${posx}px, ${window.innerHeight - 100}px, 0) scale(0.2)`;
             r.style.opacity = '0.7';
@@ -207,7 +221,7 @@ export class Window extends Component {
                 if (this.props.hasMinimised) {
                     this.props.hasMinimised(this.id);
                 }
-            }, 350);
+            }, 180);
         }
     }
 
@@ -223,8 +237,8 @@ export class Window extends Component {
             let posx = r.style.getPropertyValue("--window-transform-x") || "80px";
             let posy = r.style.getPropertyValue("--window-transform-y") || "120px";
 
-            // GPU-accelerated restore animation
-            r.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            // Fast, lightweight restore animation - 150ms
+            r.style.transition = 'transform 150ms ease-out, opacity 150ms ease-out';
             r.style.transformOrigin = 'center center';
             r.style.transform = `translate3d(${parseFloat(posx)}, ${parseFloat(posy)}, 0) scale(1)`;
             r.style.opacity = '1';
@@ -241,7 +255,7 @@ export class Window extends Component {
                 if (this.props.onMaximize) {
                     this.props.onMaximize(this.id, false);
                 }
-            }, 400);
+            }, 180);
         }
     }
 
@@ -267,8 +281,8 @@ export class Window extends Component {
                     this.props.onMaximize(this.id, true);
                 }
                 
-                // GPU-accelerated maximize animation
-                r.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                // Fast, lightweight maximize animation - 150ms
+                r.style.transition = 'transform 150ms ease-out';
                 r.style.transformOrigin = 'center center';
                 r.style.transform = `translate3d(0px, 0px, 0) scale(1)`;
                 
@@ -279,7 +293,7 @@ export class Window extends Component {
                         width: 100,   // Full width
                         isAnimating: false
                     });
-                }, 400);
+                }, 180);
             }
         }
     }
@@ -297,11 +311,11 @@ export class Window extends Component {
         
         const windowElement = document.querySelector("#" + this.id);
         if (windowElement) {
-            // GPU-accelerated close animation - scale down and fade out
+            // Fast, lightweight close animation - 120ms with subtle scale
             const currentTransform = windowElement.style.transform || 'translate3d(0, 0, 0)';
-            windowElement.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+            windowElement.style.transition = 'transform 120ms ease-in, opacity 120ms ease-in';
             windowElement.style.transformOrigin = 'center center';
-            windowElement.style.transform = currentTransform.replace(/scale\([^)]*\)/, '') + ' scale(0.9)';
+            windowElement.style.transform = currentTransform.replace(/scale\([^)]*\)/, '') + ' scale(0.96)';
             windowElement.style.opacity = '0';
         }
         
@@ -309,7 +323,7 @@ export class Window extends Component {
             setTimeout(() => {
                 this.setState({ isAnimating: false });
                 this.props.closed(this.id)
-            }, 300) // after 300ms this window will be unmounted from parent (Desktop)
+            }, 150) // after 150ms this window will be unmounted from parent (Desktop)
         });
     }
 
@@ -325,7 +339,13 @@ export class Window extends Component {
                 onDrag={this.checkOverlap}
                 allowAnyClick={false}
                 defaultPosition={{ x: this.startX, y: this.startY }}
-                bounds={{ left: 0, top: 0, right: this.state.parentSize.width, bottom: this.state.parentSize.height }}
+                position={null}
+                bounds={{ 
+                    left: 0, 
+                    top: 0, 
+                    right: Math.max(0, this.state.parentSize.width - (window.innerWidth * this.state.width / 100)), 
+                    bottom: Math.max(0, this.state.parentSize.height - (window.innerHeight * this.state.height / 100))
+                }}
                 disabled={this.state.maximized || this.state.isAnimating}
             >
                 <div
@@ -337,9 +357,11 @@ export class Window extends Component {
                         border: '1px solid #3D3D3D', // Ubuntu border - minimal, not colorful
                         borderRadius: this.state.maximized ? '0' : '4px', // Ubuntu style - smaller radius
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)', // Minimal shadow
-                        // GPU acceleration for smooth animations
+                        // GPU acceleration for smooth animations - always enabled
                         transform: 'translateZ(0)',
-                        willChange: this.state.isAnimating ? 'transform, opacity' : 'auto',
+                        backfaceVisibility: 'hidden',
+                        perspective: 1000,
+                        willChange: this.state.isAnimating ? 'transform, opacity' : 'transform',
                         // Set z-index dynamically based on maximized state
                         zIndex: this.state.maximized ? '9999' : (this.props.isFocused ? '30' : '20'),
                         // Prevent text selection during animations
@@ -363,6 +385,8 @@ export class Window extends Component {
                         id={this.id}
                         disabled={this.state.isAnimating}
                     />
+                    {/* Content wrapper to ensure proper cursor and pointer events */}
+                    <div style={{ position: 'relative', zIndex: 10, cursor: 'default', pointerEvents: 'auto', height: '100%', width: '100%', flex: 1, minHeight: 0 }}>
                     {(this.id === "settings"
                                         ? <Settings 
                                             changeBackgroundImage={this.props.changeBackgroundImage} 
@@ -373,12 +397,14 @@ export class Window extends Component {
                                         : <WindowMainScreen 
                                             screen={this.props.screen} 
                                             title={this.props.title}
+                                            id={this.id}
                                             addFolder={this.props.id === "terminal" ? this.props.addFolder : null}
                                             openApp={this.props.openApp}
                                             projectsData={this.props.projectsData}
                                             skillsData={this.props.skillsData}
                                             aboutData={this.props.aboutData}
                                           />)}
+                    </div>
                 </div>
             </Draggable >
         )
@@ -592,21 +618,36 @@ export class WindowMainScreen extends Component {
         }, 3000);
     }
     render() {
+        // Check if this is Terminal app - no overlay needed
+        const isTerminal = this.props.title === "Terminal" || 
+                          this.props.id === "terminal" || 
+                          this.props.id === "Terminal";
+        
         return (
             <div 
-                className="w-full flex-grow z-20 max-h-full overflow-y-auto overflow-x-hidden windowMainScreen rounded-b-xl scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-500"
+                className="w-full flex-grow z-20 max-h-full overflow-y-auto overflow-x-hidden windowMainScreen rounded-b-xl ubuntu-scrollbar"
                 style={{
-                    backgroundColor: this.state.setDarkBg 
-                        ? 'rgba(17, 24, 39, 0.8)' 
-                        : 'rgba(55, 65, 81, 0.8)',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'background-color 3s ease',
+                    backgroundColor: isTerminal ? 'transparent' : (this.state.setDarkBg 
+                        ? 'rgba(17, 24, 39, 0.95)' 
+                        : 'rgba(55, 65, 81, 0.95)'),
+                    backdropFilter: isTerminal ? 'none' : 'blur(2px)',
+                    transition: isTerminal ? 'none' : 'background-color 3s ease',
                     minHeight: '0',
                     scrollbarWidth: 'thin',
-                    scrollbarColor: 'rgba(75, 85, 99, 0.8) transparent'
+                    scrollbarColor: 'rgba(75, 85, 99, 0.8) transparent',
+                    // GPU acceleration for smooth scrolling - optimized
+                    transform: 'translateZ(0)',
+                    willChange: 'scroll-position',
+                    WebkitOverflowScrolling: 'touch',
+                    overscrollBehavior: 'contain',
+                    // Remove smooth scroll for better performance
+                    scrollBehavior: 'auto',
+                    // Optimize scrolling performance
+                    contain: 'layout style paint',
+                    position: 'relative'
                 }}
             >
-                <div className="p-2 min-h-full">
+                <div className={isTerminal ? "min-h-full w-full h-full" : "min-h-full"} style={isTerminal ? { position: 'relative', zIndex: 10 } : {}}>
                     {this.props.addFolder 
                       ? displayTerminal(this.props.addFolder, this.props.openApp) 
                       : this.props.screen({

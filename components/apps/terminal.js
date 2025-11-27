@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ReactGA from "react-ga";
 
 const Terminal = ({ addFolder, openApp }) => {
   const [history, setHistory] = useState([]);
@@ -495,7 +494,6 @@ File Operations:
   mkdir [name]  - Create directory
   
 Applications:
-  chrome        - Open Google Chrome
   
 System Info:
   whoami        - Current user info
@@ -755,18 +753,6 @@ tmpfs            2097152       0   2097152   0% /tmp
         }
         break;
 
-      case "chrome":
-        if (openApp) {
-          openApp("chrome");
-          addToHistory(trimmed, "Opening Google Chrome...");
-        } else {
-          addToHistory(
-            trimmed,
-            "chrome: application launcher not available",
-            true
-          );
-        }
-        break;
 
       case "resume":
         addToHistory(
@@ -805,12 +791,12 @@ Portfolio URL: <span class="text-blue-400 underline cursor-pointer" onclick="win
 <span class="text-gray-400">Click the link above or visit manually</span>`
         );
         break;
-    case "sudo":
-  addToHistory(
-    trimmed,
-    `<img class='w-2/5' src='./images/memes/used-sudo-command.webp' />`
-  );
-  break;
+      case "sudo":
+        addToHistory(
+          trimmed,
+          `<img class='w-2/5' src='./images/memes/used-sudo-command.webp' alt='sudo meme' />`
+        );
+        break;
 
       default:
         addToHistory(
@@ -878,11 +864,19 @@ Portfolio URL: <span class="text-blue-400 underline cursor-pointer" onclick="win
   };
   
   return (
-    <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm overflow-hidden">
+    <div className="w-full h-full bg-black text-green-400 font-mono text-sm overflow-hidden" style={{ position: 'relative', zIndex: 10 }}>
       {/* Terminal Body */}
       <div
         ref={terminalRef}
         className="w-full h-full p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-green-500/50 scrollbar-track-transparent"
+        style={{
+          transform: 'translateZ(0)',
+          willChange: 'scroll-position',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+          position: 'relative',
+          zIndex: 10
+        }}
       >
         {/* Welcome Message */}
         <div className="mb-4 text-cyan-400">

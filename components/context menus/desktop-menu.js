@@ -35,35 +35,35 @@ function DesktopMenu(props) {
     }
 
     return (
-        <div id="desktop-menu" className={(props.active ? " block " : " hidden ") + " cursor-default w-56 bg-gray-800 border border-gray-600 rounded-lg text-gray-100 py-3 absolute z-50 text-sm font-mono shadow-lg"}>
-            <div onClick={props.addNewFolder} className="w-full py-1.5 px-4 hover:bg-gray-700 hover:bg-opacity-50">
-                <span className="ml-2">📁 New Folder</span>
+        <div 
+            id="desktop-menu" 
+            className={(props.active ? " block " : " hidden ") + " cursor-default w-44 bg-[#2D2D2D] border border-[#3D3D3D] rounded text-white py-1.5 absolute z-50 text-xs shadow-lg"}
+            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
+        >
+            <div className="w-full py-1 px-3 text-[#808080] cursor-not-allowed">
+                <span>📋 Paste</span>
             </div>
             <Devider />
-            <div className="w-full py-1.5 px-4 text-gray-500 cursor-not-allowed">
-                <span className="ml-2">📋 Paste</span>
+            <div className="w-full py-1 px-3 text-[#808080] cursor-not-allowed">
+                <span>🗂 Show Desktop in Files</span>
+            </div>
+            <div onClick={openTerminal} className="w-full py-1 px-3 hover:bg-[#3D3D3D] cursor-pointer transition-colors duration-150">
+                <span>🖥 Open in Terminal</span>
             </div>
             <Devider />
-            <div className="w-full py-1.5 px-4 text-gray-500 cursor-not-allowed">
-                <span className="ml-2">🗂 Show Desktop in Files</span>
-            </div>
-            <div onClick={openTerminal} className="w-full py-1.5 px-4 hover:bg-gray-700 hover:bg-opacity-50">
-                <span className="ml-2">🖥 Open in Terminal</span>
+            <div onClick={openSettings} className="w-full py-1 px-3 hover:bg-[#3D3D3D] cursor-pointer transition-colors duration-150">
+                <span>🎨 Change Background...</span>
             </div>
             <Devider />
-            <div onClick={openSettings} className="w-full py-1.5 px-4 hover:bg-gray-700 hover:bg-opacity-50">
-                <span className="ml-2">🎨 Change Background...</span>
+            <div className="w-full py-1 px-3 text-[#808080] cursor-not-allowed">
+                <span>🖼 Display Settings</span>
+            </div>
+            <div onClick={openSettings} className="w-full py-1 px-3 hover:bg-[#3D3D3D] cursor-pointer transition-colors duration-150">
+                <span>⚙ Settings</span>
             </div>
             <Devider />
-            <div className="w-full py-1.5 px-4 text-gray-500 cursor-not-allowed">
-                <span className="ml-2">🖼 Display Settings</span>
-            </div>
-            <div onClick={openSettings} className="w-full py-1.5 px-4 hover:bg-gray-700 hover:bg-opacity-50">
-                <span className="ml-2">⚙ Settings</span>
-            </div>
-            <Devider />
-            <div onClick={goFullScreen} className="w-full py-1.5 px-4 hover:bg-gray-700 hover:bg-opacity-50">
-                <span className="ml-2">{isFullScreen ? "↙ Exit" : "↕ Enter"} Full Screen</span>
+            <div onClick={goFullScreen} className="w-full py-1 px-3 hover:bg-[#3D3D3D] cursor-pointer transition-colors duration-150">
+                <span>{isFullScreen ? "↙ Exit" : "↕ Enter"} Full Screen</span>
             </div>
         </div>
     )
@@ -71,8 +71,8 @@ function DesktopMenu(props) {
 
 function Devider() {
     return (
-        <div className="flex justify-center w-full">
-            <div className="border-t border-gray-600 py-1 w-3/4"></div>
+        <div className="flex justify-center w-full my-0.5">
+            <div className="border-t border-[#3D3D3D] w-full"></div>
         </div>
     );
 }

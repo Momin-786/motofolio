@@ -302,7 +302,20 @@ renderGlassyTaskbar = () => {
   );
 };
 renderGlassyTaskbarApps = () => {
-  const essentialApps = ["terminal", "chrome", "projects","skills","contacts","about", "settings"];
+  const essentialApps = ["terminal", "projects","skills","contacts","about", "settings"];
+  
+  // Get current theme color
+  const currentThemeObj = this.state.availableThemes.find(t => t.id === this.state.currentTheme);
+  const themeColor = currentThemeObj ? currentThemeObj.color : '#E95420'; // Default Ubuntu orange
+  
+  // Helper function to convert hex to rgba
+  const hexToRgba = (hex, alpha) => {
+    if (!hex || hex.length !== 7) return `rgba(233, 84, 32, ${alpha})`; // Default Ubuntu orange
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
 
   let taskbarApps = [];
   apps.forEach((app) => {
@@ -315,101 +328,91 @@ renderGlassyTaskbarApps = () => {
           key={app.id}
           onClick={() => {
             this.openApp(app.id);
-            // If app is already open, bring to focus and maximize if needed
             if (isOpen) {
               this.focus(app.id);
-              // Add full-screen effect
-              const windowElement = document.getElementById(app.id);
-              if (windowElement) {
-                windowElement.style.transform = 'translate(0, 0) scale(1)';
-                windowElement.style.width = '100vw';
-                windowElement.style.height = '100vh';
-                windowElement.style.top = '0';
-                windowElement.style.left = '0';
-                windowElement.style.zIndex = '1000';
-              }
             }
           }}
-          className="relative p-3 transition-all duration-300 ease-out transform group"
+          className="relative flex items-center justify-center transition-all duration-200 ease-out group cursor-pointer"
+          style={{
+            padding: '6px 8px',
+            borderRadius: '8px',
+            backgroundColor: isOpen && isFocused 
+              ? hexToRgba(themeColor, 0.2) 
+              : isOpen 
+              ? 'rgba(255, 255, 255, 0.08)' 
+              : 'transparent',
+            border: isOpen && isFocused 
+              ? `1px solid ${hexToRgba(themeColor, 0.4)}` 
+              : '1px solid transparent',
+            backdropFilter: 'blur(10px)',
+          }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-8px) scale(1.2)";
-            e.currentTarget.querySelector('img').style.filter = "brightness(1.2) drop-shadow(0 0 15px var(--accent-primary))";
-            e.currentTarget.querySelector('.icon-glow').style.opacity = "1";
+            if (!isOpen || !isFocused) {
+              e.currentTarget.style.backgroundColor = hexToRgba(themeColor, 0.15);
+              e.currentTarget.style.borderColor = hexToRgba(themeColor, 0.3);
+              e.currentTarget.style.boxShadow = `0 4px 12px ${hexToRgba(themeColor, 0.3)}`;
+            }
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.transform = isOpen && isFocused ? "translateY(-2px) scale(1.05)" : "translateY(0) scale(1)";
-            e.currentTarget.querySelector('img').style.filter = isOpen 
-              ? isFocused 
-                ? "brightness(1.1) drop-shadow(0 0 8px var(--accent-primary))" 
-                : "brightness(1.05)"
-              : "brightness(0.9)";
-            e.currentTarget.querySelector('.icon-glow').style.opacity = isOpen && isFocused ? "0.6" : "0";
-          }}
-          style={{
-            transform: isOpen && isFocused ? "translateY(-2px) scale(1.05)" : "translateY(0) scale(1)",
+            if (!isOpen || !isFocused) {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+              e.currentTarget.style.boxShadow = 'none';
+            }
           }}
         >
-          {/* Icon with clean design */}
-          <div className="w-12 h-12 flex items-center justify-center relative">
+          {/* Icon Container */}
+          <div className="relative w-8 h-8 md:w-9 md:h-9 flex items-center justify-center">
             <img
-              width="48px"
-              height="48px"
+              width="32px"
+              height="32px"
               src={app.icon}
               alt={app.title}
-              className="w-full h-full object-contain transition-all duration-300"
+              className="w-full h-full object-contain transition-all duration-200"
               style={{
-                filter: isOpen 
-                  ? isFocused 
-                    ? "brightness(1.1) drop-shadow(0 0 8px var(--accent-primary))" 
-                    : "brightness(1.05)"
-                  : "brightness(0.9)",
-                transition: "filter 0.3s ease",
+                filter: isOpen && isFocused 
+                  ? `brightness(1.2) drop-shadow(0 0 8px ${hexToRgba(themeColor, 0.7)})` 
+                  : isOpen
+                  ? "brightness(1.1)"
+                  : "brightness(0.95)",
+                transition: "filter 0.2s ease",
               }}
             />
             
-            {/* Theme color glow effect on hover */}
-            <div 
-              className="icon-glow absolute inset-0 rounded-full transition-all duration-300 pointer-events-none"
-              style={{
-                background: `radial-gradient(circle, var(--accent-primary)/30 0%, transparent 60%)`,
-                opacity: isOpen && isFocused ? "0.6" : "0",
-                transform: "scale(1.5)",
-              }}
-            />
+            {/* Active indicator dot */}
+            {isOpen && (
+              <div
+                className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full transition-all duration-200"
+                style={{
+                  backgroundColor: isFocused ? themeColor : "#4CAF50",
+                  boxShadow: isFocused 
+                    ? `0 0 8px ${hexToRgba(themeColor, 0.9)}` 
+                    : "0 0 6px rgba(76, 175, 80, 0.7)",
+                }}
+              />
+            )}
           </div>
 
-          {/* Minimal active indicator */}
-          {isOpen && (
-            <div
-              className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 transition-all duration-300"
-              style={{
-                width: isFocused ? '20px' : '12px',
-                height: '2px',
-                borderRadius: '1px',
-                backgroundColor: "var(--accent-primary)",
-                boxShadow: `0 0 ${isFocused ? '8px' : '4px'} var(--accent-primary)/60`,
-              }}
-            ></div>
-          )}
-
-          {/* Enhanced tooltip with theme colors */}
+          {/* Hover tooltip - Show name only on hover */}
           <div 
-            className="absolute -top-14 left-1/2 transform -translate-x-1/2 px-3 py-1.5 rounded-lg text-xs font-mono opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md pointer-events-none whitespace-nowrap z-50"
+            className="absolute -top-10 left-1/2 transform -translate-x-1/2 px-2.5 py-1.5 rounded-lg text-[11px] opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50"
             style={{
-              backgroundColor: "var(--accent-primary)",
-              color: "white",
-              boxShadow: "0 4px 20px var(--accent-primary)/40",
-              fontFamily: "var(--font-mono)",
+              backgroundColor: "rgba(45, 45, 45, 0.85)",
+              backdropFilter: "blur(12px)",
+              color: "#FFFFFF",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              fontFamily: "'Ubuntu Mono', monospace",
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.3)",
             }}
           >
             {app.title}
-            {/* Small arrow pointing down */}
+            {/* Arrow */}
             <div 
               className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0"
               style={{
-                borderLeft: "4px solid transparent",
-                borderRight: "4px solid transparent",
-                borderTop: "4px solid var(--accent-primary)",
+                borderLeft: "5px solid transparent",
+                borderRight: "5px solid transparent",
+                borderTop: "5px solid rgba(45, 45, 45, 0.85)",
               }}
             />
           </div>
@@ -435,15 +438,32 @@ renderGlassyTaskbarApps = () => {
           <button
             key={`window-${app.id}`}
             onClick={() => this.focus(app.id)}
-            className={`
-                        px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 transform hover:scale-105
-                        ${
-                          isFocused
-                            ? "bg-blue-500/40 text-blue-100 border border-blue-400/50 shadow-md shadow-blue-500/20"
-                            : "bg-gray-700/40 text-gray-300 border border-gray-600/30 hover:bg-gray-600/50"
-                        }
-                        backdrop-blur-sm max-w-32 truncate
-                    `}
+            className="px-3 py-1.5 rounded transition-all duration-200 text-xs max-w-32 truncate"
+            style={{
+              fontFamily: "'Ubuntu Mono', monospace",
+              backgroundColor: isFocused 
+                ? "rgba(233, 84, 32, 0.2)" 
+                : "rgba(45, 45, 45, 0.4)",
+              color: isFocused ? "#E95420" : "#B3B3B3",
+              border: isFocused 
+                ? "1px solid rgba(233, 84, 32, 0.4)" 
+                : "1px solid rgba(61, 61, 61, 0.3)",
+              boxShadow: isFocused 
+                ? "0 2px 8px rgba(233, 84, 32, 0.2)" 
+                : "none",
+            }}
+            onMouseEnter={(e) => {
+              if (!isFocused) {
+                e.currentTarget.style.backgroundColor = "rgba(45, 45, 45, 0.6)";
+                e.currentTarget.style.color = "#FFFFFF";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isFocused) {
+                e.currentTarget.style.backgroundColor = "rgba(45, 45, 45, 0.4)";
+                e.currentTarget.style.color = "#B3B3B3";
+              }
+            }}
             title={app.title}
           >
             {app.title}
@@ -458,7 +478,11 @@ renderGlassyTaskbarApps = () => {
       activeWindows.push(
         <div
           key="no-windows"
-          className="text-white-500 text- font-mono"
+          className="text-xs px-3 py-1.5"
+          style={{
+            fontFamily: "'Ubuntu Mono', monospace",
+            color: "#808080",
+          }}
         >
           Home
         </div>
@@ -908,46 +932,27 @@ renderGlassyTaskbarApps = () => {
           <DefaultMenu active={this.state.context_menus.default} />
         </div>
 
-        {/* GLASSMORPHISM TASKBAR WITH FONTS - Responsive */}
-        <div className="h-20 md:h-25 flex items-center justify-center px-2 md:px-8 pb-2 md:pb-6 relative z-40">
+        {/* Glassy Taskbar - Centered and Compact - Bottom Positioned */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 md:h-18 flex items-center justify-center px-2 md:px-8 pb-2 md:pb-4 z-40">
           <div
-            className="flex items-center justify-between bg-gray-800/20 backdrop-blur-xl border border-gray-700/30 rounded-xl md:rounded-2xl shadow-2xl px-2 md:px-5 py-1.5 md:py-2 w-full md:w-2/3 md:max-w-4xl"
+            className="flex items-center justify-center gap-3 md:gap-4 rounded-xl md:rounded-2xl shadow-2xl px-3 md:px-5 py-2 transition-all duration-300"
             style={{
               backgroundColor: "rgba(31, 41, 55, 0.15)",
               backdropFilter: "blur(24px)",
-              borderColor: "var(--border)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+              width: "auto",
+              minWidth: "fit-content",
             }}
           >
-            {/* Left: Active Windows - Hidden on mobile */}
-            <div className="hidden md:flex items-center space-x-2 flex-1">
-              {this.renderActiveWindows()}
-            </div>
-
-            {/* Center: App Icons - Scrollable on mobile */}
-            <div className="flex items-center space-x-1 md:space-x-3 px-1 md:px-4 overflow-x-auto ubuntu-scrollbar flex-1 md:flex-none">
+            {/* Centered: App Icons Only */}
+            <div className="flex items-center space-x-1 md:space-x-2 px-1 md:px-2 overflow-x-auto ubuntu-scrollbar justify-center">
               {this.renderGlassyTaskbarApps()}
             </div>
-
-            {/* Right: Clock + Theme Selector */}
-            <div className="flex items-center justify-end space-x-1 md:space-x-3 flex-shrink-0">
-              {/* Clock with mono font - Smaller on mobile */}
-              <div
-                className="text-gray-200 text-xs md:text-sm font-medium hidden sm:block"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  color: "var(--text-primary)",
-                }}
-              >
-                {new Date().toLocaleTimeString("en-US", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-
-              {/* Theme Selector - Smaller on mobile */}
-              <div className="scale-75 md:scale-100">
-                {this.renderThemeSelector()}
-              </div>
+            
+            {/* Theme Selector */}
+            <div className="flex items-center flex-shrink-0 pl-2 border-l border-white/10">
+              {this.renderThemeSelector()}
             </div>
           </div>
         </div>

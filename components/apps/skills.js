@@ -53,132 +53,29 @@ const SkillsApp = ({ onClose, skillsData: propsSkillsData = [] }) => {
     try {
       const response = await fetch('/api/skills');
       const data = await response.json();
-      if (data.success) {
+      if (data.success && data.data && data.data.length > 0) {
         const transformed = transformSkillsData(data.data);
         setSkills(transformed);
+      } else {
+        console.warn('No skills data available from API');
+        setSkills({});
       }
     } catch (error) {
       console.error('Error fetching skills:', error);
+      setSkills({});
     }
   };
 
-  // Hardcoded skills data organized by categories (fallback)
-  const hardcodedSkillsData = {
-    programming: {
-      name: "Programming Languages",
-      icon: Code,
-      color: "from-blue-500 to-cyan-500",
-      description: "Core programming languages I use for development",
-      skills: [
-        { name: "JavaScript", level: "Expert", years: 4, projects: 15, percentage: 95 },
-        { name: "Python", level: "Advanced", years: 3, projects: 8, percentage: 80 },
-        { name: "Java", level: "Advanced", years: 3, projects: 6, percentage: 80 },
-        { name: "TypeScript", level: "Advanced", years: 2, projects: 10, percentage: 85 },
-        { name: "C#", level: "Intermediate", years: 2, projects: 4, percentage: 65 },
-        { name: "Dart", level: "Advanced", years: 2, projects: 5, percentage: 75 },
-        { name: "SQL", level: "Advanced", years: 3, projects: 12, percentage: 80 },
-        { name: "C++", level: "Intermediate", years: 2, projects: 3, percentage: 60 },
-        { name: "C", level: "Intermediate", years: 2, projects: 2, percentage: 60 },
-        { name: "Kotlin", level: "Beginner", years: 1, projects: 2, percentage: 35 }
-      ]
-    },
-    frontend: {
-      name: "Frontend Development",
-      icon: Globe,
-      color: "from-green-500 to-emerald-500",
-      description: "Creating responsive and interactive user interfaces",
-      skills: [
-        { name: "React.js", level: "Expert", years: 4, projects: 20, percentage: 95 },
-        { name: "Next.js", level: "Advanced", years: 2, projects: 8, percentage: 85 },
-        { name: "HTML5", level: "Expert", years: 5, projects: 25, percentage: 95 },
-        { name: "Tailwind CSS", level: "Expert", years: 3, projects: 15, percentage: 90 },
-        { name: "Flutter", level: "Advanced", years: 2, projects: 5, percentage: 80 },
-        { name: "Angular", level: "Intermediate", years: 1, projects: 3, percentage: 65 },
-        { name: "Vue.js", level: "Intermediate", years: 1, projects: 4, percentage: 60 },
-        { name: "Vite", level: "Advanced", years: 2, projects: 10, percentage: 75 }
-      ]
-    },
-    backend: {
-      name: "Backend Development",
-      icon: Server,
-      color: "from-purple-500 to-pink-500",
-      description: "Building robust server-side applications and APIs",
-      skills: [
-        { name: "Node.js", level: "Expert", years: 4, projects: 18, percentage: 95 },
-        { name: "Express.js", level: "Expert", years: 4, projects: 15, percentage: 90 },
-        { name: "Spring Boot", level: "Advanced", years: 2, projects: 6, percentage: 80 },
-        { name: "REST APIs", level: "Expert", years: 4, projects: 20, percentage: 95 },
-        { name: "JWT Authentication", level: "Advanced", years: 3, projects: 12, percentage: 85 },
-        { name: "Python Flask", level: "Intermediate", years: 2, projects: 4, percentage: 65 }
-      ]
-    },
-    database: {
-      name: "Databases",
-      icon: Database,
-      color: "from-orange-500 to-red-500",
-      description: "Data storage and management solutions",
-      skills: [
-        { name: "MongoDB", level: "Expert", years: 4, projects: 15, percentage: 90 },
-        { name: "PostgreSQL", level: "Advanced", years: 3, projects: 10, percentage: 85 },
-        { name: "MySQL", level: "Advanced", years: 3, projects: 12, percentage: 80 },
-        { name: "Sequelize ORM", level: "Advanced", years: 3, projects: 8, percentage: 75 },
-        { name: "Firebase", level: "Intermediate", years: 2, projects: 6, percentage: 70 }
-      ]
-    },
-    ai: {
-      name: "AI & Machine Learning",
-      icon: Brain,
-      color: "from-indigo-500 to-purple-500",
-      description: "Artificial intelligence and machine learning technologies",
-      skills: [
-        { name: "TensorFlow", level: "Advanced", years: 2, projects: 5, percentage: 80 },
-        { name: "Deep Learning", level: "Advanced", years: 2, projects: 4, percentage: 75 },
-        { name: "Computer Vision", level: "Intermediate", years: 2, projects: 3, percentage: 70 },
-        { name: "OpenCV", level: "Intermediate", years: 2, projects: 3, percentage: 65 },
-        { name: "Classification Systems", level: "Advanced", years: 2, projects: 4, percentage: 80 },
-        { name: "Predictive Modeling", level: "Intermediate", years: 1, projects: 2, percentage: 60 },
-        { name: "AI Automation", level: "Intermediate", years: 1, projects: 3, percentage: 65 }
-      ]
-    },
-    mobile: {
-      name: "Mobile Development",
-      icon: Smartphone,
-      color: "from-teal-500 to-cyan-500",
-      description: "Cross-platform mobile application development",
-      skills: [
-        { name: "Flutter", level: "Advanced", years: 2, projects: 5, percentage: 80 },
-        { name: "React Native", level: "Intermediate", years: 1, projects: 3, percentage: 65 },
-        { name: "Dart", level: "Advanced", years: 2, projects: 5, percentage: 75 },
-        { name: "Mobile UI/UX", level: "Advanced", years: 2, projects: 8, percentage: 85 },
-        { name: "Firebase Integration", level: "Intermediate", years: 2, projects: 4, percentage: 70 }
-      ]
-    },
-    tools: {
-      name: "DevOps & Tools",
-      icon: Settings,
-      color: "from-yellow-500 to-orange-500",
-      description: "Development tools and deployment technologies",
-      skills: [
-        { name: "Git", level: "Expert", years: 4, projects: 30, percentage: 95 },
-        { name: "Docker", level: "Intermediate", years: 2, projects: 6, percentage: 70 },
-        { name: "Postman", level: "Expert", years: 3, projects: 20, percentage: 90 },
-        { name: "Vercel", level: "Advanced", years: 2, projects: 15, percentage: 85 },
-        { name: "Swagger", level: "Intermediate", years: 2, projects: 8, percentage: 65 },
-        { name: "Bruno", level: "Intermediate", years: 1, projects: 5, percentage: 60 },
-        { name: "Botpress", level: "Beginner", years: 1, projects: 2, percentage: 40 },
-        { name: "n8n", level: "Beginner", years: 1, projects: 1, percentage: 35 }
-      ]
-    }
-  };
+  // All data comes from MongoDB - no hardcoded fallback
 
-  // Use transformed data or fallback to hardcoded
-  const skillsDataStructure = Object.keys(skills).length > 0 ? skills : hardcodedSkillsData;
+  // Use transformed data from MongoDB only
+  const skillsDataStructure = Object.keys(skills).length > 0 ? skills : {};
   const categories = Object.keys(skillsDataStructure);
-  const currentCategory = skillsDataStructure[activeCategory] || hardcodedSkillsData.programming || {
-    name: "Programming Languages",
+  const currentCategory = skillsDataStructure[activeCategory] || {
+    name: categories.length > 0 ? categories[0] : "No Category",
     icon: Code,
-    color: "from-blue-500 to-cyan-500",
-    description: "Core programming languages",
+    color: "",
+    description: "No skills available",
     skills: []
   };
 
@@ -189,7 +86,7 @@ const SkillsApp = ({ onClose, skillsData: propsSkillsData = [] }) => {
   const getLevelColor = (level) => {
     switch (level.toLowerCase()) {
       case "expert":
-        return "bg-[#4CAF50]/20 text-[#4CAF50] border-[#4CAF50]/30";
+        return "bg-[#2D2D2D] text-[#4CAF50] border-[#4CAF50]/30";
       case "advanced":
         return "bg-[#2D2D2D] text-[#B3B3B3] border-[#3D3D3D]";
       case "intermediate":
@@ -290,7 +187,15 @@ const SkillsApp = ({ onClose, skillsData: propsSkillsData = [] }) => {
         </div>
 
         {/* Skills List - Ubuntu style */}
-        <div className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar">
+        <div 
+            className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar"
+            style={{
+                transform: 'translateZ(0)',
+                willChange: 'scroll-position',
+                WebkitOverflowScrolling: 'touch',
+                overscrollBehavior: 'contain'
+            }}
+        >
           {filteredSkills.length > 0 ? (
             <div>
               {filteredSkills.map((skill, index) => (

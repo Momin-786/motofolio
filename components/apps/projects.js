@@ -43,226 +43,19 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
     try {
       const response = await fetch('/api/projects');
       const data = await response.json();
-      if (data.success) {
+      if (data.success && data.data && data.data.length > 0) {
         setProjects(data.data);
+      } else {
+        console.warn('No projects data available from API');
+        setProjects([]);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
-      // Fallback to hardcoded data
-      setProjects([
-    {
-   id: 1,
-      name: "Brain Tumor AI Classifier",
-      category: "ai",
-      icon: Brain,
-      color: "from-red-500 to-rose-500",
-      status: "Completed",
-      tech: ["TensorFlow", "Python", "OpenCV", "Deep Learning"],
-      description: "A deep learning-based medical image classifier for tumor detection with 94.5% accuracy rate.",
-      features: [
-        "Automated tumor detection",
-        "Multiple tumor type classification",
-        "High accuracy prediction (94.5%)",
-        "Medical image preprocessing",
-        "Result visualization",
-        "Clinical report generation"
-      ],
-      screenshots: ["./screenshots/brain-tumor-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "https://github.com/Momin-786/",
-      year: "2025"
-    },
-    {
-      id: 2,
-      name: "Job Portal System",
-      category: "web",
-      icon: Users,
-      color: "from-green-500 to-emerald-500",
-      status: "Completed",
-      tech: ["MySQL", "Node.js", "React", "Sequelize ORM"],
-      description: "A complete job posting and application management system with employer dashboards and applicant tracking.",
-      features: [
-        "Employer dashboard",
-        "Applicant profiles",
-        "Job posting management",
-        "Application tracking",
-        "Secure authentication",
-        "Advanced search filters",
-        "Resume upload system"
-      ],
-      screenshots: ["./screenshots/job-portal-1.jpg"],
-      demoUrl: "https://job-portal-db-c42r.vercel.app/",
-      githubUrl: "https://github.com/Momin-786/JobPortalDB",
-      year: "2024"
-    },
-    {
-        id: 3,
-      name: "Weather Forecast App",
-      category: "mobile",
-      icon: CloudSun,
-      color: "from-orange-500 to-yellow-500",
-      status: "Published",
-      tech: ["PostgreSQL", "Docker", "Spring Boot", "Flutter", "Dart", "OpenWeatherMap API", "(React and Nodejs for Web)"],
-      description: "A cross-platform weather tracking solution with real-time forecasts and location-based search.",
-      features: [
-        "Real-time weather forecasts",
-        "Multi-day weather view",
-        "Location-based search",
-        "Weather alerts",
-        "Historical data",
-        "Cross-platform support",
-        "Offline functionality"
-      ],
-      screenshots: ["./screenshots/weather-app-1.jpg"],
-      demoUrl: "https://web-semester-project-brown.vercel.app/",
-      githubUrl: "https://github.com/Momin-786/weather_app_flutter",
-      year: "2025"
-    },
-    {
-       id: 4,
-      name: "Ebay",
-      category: "mobile",
-      icon: ShoppingCart,
-      color: "from-amber-500 to-orange-500",
-      status: "In Development",
-      tech: ["Flutter", "PostgreSQL","Docker", "Stripe", "Redis", "Spring Boot"],
-      description: "A full-featured e-commerce platform with payment integration and inventory management.",
-      features: [
-        "Product catalog management",
-        "Shopping cart functionality",
-        "Payment gateway integration",
-        "Order tracking system",
-        "Inventory management",
-        "Customer reviews",
-        "Admin dashboard"
-      ],
-      screenshots: ["./screenshots/ecommerce-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "https://github.com/Momin-786/eShop-_Flutter_Project",
-      year: "2025"
-    
-    },
-    {
-            id: 5,
-      name: "Fee Submission SaaS",
-      category: "saas",
-      icon: Database,
-      color: "from-blue-500 to-cyan-500",
-      status: "completed",
-      tech: ["React.js", "Spring Boot", "Tailwind CSS", "JWT"],
-      description: "A secure, scalable platform for school fee management with multi-school support and automated receipt generation.",
-      features: [
-        "Role-based access control",
-        "Responsive UI design", 
-        "Real-time payment updates",
-        "Multi-school support",
-        "Payment history tracking",
-        "Automated receipts generation"
-      ],
-      screenshots: ["./screenshots/fee-system-1.jpg", "./screenshots/fee-system-2.jpg"],
-      demoUrl: "https://fee-submission-system-saas-4a5g.vercel.app/",
-      githubUrl: "https://github.com/Momin-786/Fee_Submission_System_SAAS",
-      year: "2024"
-    },
-    {
-      id: 6,
-      name: "Blog Application",
-      category: "mobile",
-      icon: FileText,
-      color: "from-indigo-500 to-purple-500",
-      status: "completed",
-      tech: ["Flutter", "Firebase", "Cloudinary"],
-      description: "A modern blog platform with media management and rich text editing capabilities.",
-      features: [
-        "Rich text editor",
-        "Image upload & optimization",
-        "User authentication",
-        "Comment system",
-        "Social sharing",
-        "Responsive design",
-        "Offline reading"
-      ],
-      screenshots: ["./screenshots/blog-app-1.jpg"],
-      demoUrl: "#",
-      githubUrl: "https://github.com/Momin-786/Blog_App_Flutter",
-      year: "2025"
-    },
-{
-  id: 7,
-  name: "Modito - Online Code Editor",
-  category: "web",
-  icon: Code,
-  color: "from-blue-500 to-indigo-500",
-  status: "Ongoing",
-  tech: ["React", "Vite", "Monaco Editor", "Tailwind CSS", "React Toastify"],
-  description: "Lightweight in-browser code editor for real-time HTML, CSS, and JavaScript editing with live preview and project management.",
-  features: [
-    "Real-time Code Editing",
-    "File Renaming and Management",
-    "Project Saving to LocalStorage",
-    "Copy, Paste, and Reset Content",
-    "Live Code Preview",
-    "Custom Tab Colors",
-    "Toast Notifications",
-    "Clipboard API Integration",
-    "Syntax Highlighting",
-    "Custom Logo and Favicon"
-  ],
-  industries: ["Education", "Web Development", "Software Development"],
-  screenshots: ["./screenshots/modito-1.jpg"],
-  demoUrl: "https://web-code-editor-coral.vercel.app/",
-  githubUrl: "https://github.com/Momin-786/Web_Code_Edito",
-  year: "2025"
-},
-    {
-      id: 8,
-      name: "Papi's Feedback App",
-      category: "web",
-      icon: MessageSquare,
-      color: "from-purple-500 to-pink-500",
-      status: "Live",
-      tech: ["MongoDB", "Express.js", "React.js", "Node.js"],
-      description: "A streamlined feedback collection tool for businesses with custom form creation and analytics dashboard.",
-      features: [
-        "Custom form creation",
-        "Real-time feedback collection",
-        "Data export capabilities",
-        "Analytics dashboard",
-        "Multi-format responses",
-        "User-friendly interface"
-      ],
-      screenshots: ["./screenshots/feedback-app-1.jpg"],
-      demoUrl: "https://papifeedback.vercel.app/",
-      githubUrl: "https://github.com/Momin-786/Feedback_Page",
-      year: "2025"
-    },
-    {
-  id: 9,
-  name: "Auction Website",
-  category: "web",
-  icon: Users,
-  color: "from-purple-500 to-pink-500",
-  status: "Ongoing",
-  tech: ["React", "Firebase", "Bootstrap", "GitHub Pages"],
-  description: "Simple online auction platform with real-time bidding, hosted on GitHub Pages, using Firebase for authentication and data management.",
-  features: [
-    "Real-time Bidding",
-    "Mobile Responsive UI",
-    "Anonymous Username Login",
-    "Admin Panel for Auction Management",
-    "Detailed Item Listings with Images",
-    "Firestore Security Rules",
-    "Automatic Deployment via GitHub Pages"
-  ],
-  industries: ["Charity", "E-commerce", "Fundraising"],
-  screenshots: ["./screenshots/auction-website-1.jpg"],
-  demoUrl: "https://online-bid-system.vercel.app/",
-  githubUrl: "https://github.com/Momin-786/Online_Bid_System",
-      year: "2025"
-}
-      ]);
+      setProjects([]);
     }
   };
+
+  // All data comes from MongoDB - no hardcoded fallback
 
   const categories = [
     { id: "all", name: "All", count: projects.length },
@@ -289,16 +82,16 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
       case "production":
       case "live":
       case "published":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
+        return "bg-[#2D2D2D] text-[#4CAF50] border-[#4CAF50]/30";
       case "completed":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+        return "bg-[#2D2D2D] text-[#B3B3B3] border-[#3D3D3D]";
       case "in development":
       case "active development":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+        return "bg-[#2D2D2D] text-[#E95420] border-[#E95420]/30";
       case "ongoing":
-        return "bg-purple-500/20 text-purple-400 border-purple-500/30";
+        return "bg-[#2D2D2D] text-[#B3B3B3] border-[#3D3D3D]";
       default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+        return "bg-[#2D2D2D] text-[#808080] border-[#3D3D3D]";
     }
   };
 
@@ -350,13 +143,13 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
                 <div className="flex flex-col gap-2">
                   {/* Search Bar - Ubuntu style */}
                   <div className="relative flex-1">
-                    <Search className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 text-[#808080]" />
+                    <Search className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 text-[#808080] z-10 pointer-events-none" />
                     <input
                       type="text"
                       placeholder="Search projects..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="ubuntu-input pl-8 md:pl-10 text-xs md:text-sm"
+                      className="ubuntu-input pl-8 md:pl-10 text-xs md:text-sm relative z-0"
                     />
                   </div>
 
@@ -381,7 +174,15 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
             </div>
 
             {/* Projects List - Nautilus-style */}
-            <div className="flex-1 overflow-auto bg-[#1E1E1E]">
+            <div 
+                className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar"
+                style={{
+                    transform: 'translateZ(0)',
+                    willChange: 'scroll-position',
+                    WebkitOverflowScrolling: 'touch',
+                    overscrollBehavior: 'contain'
+                }}
+            >
               {filteredProjects.length > 0 ? (
                 <div>
                   {filteredProjects.map(project => {
@@ -473,7 +274,15 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
             </div>
 
             {/* Content - Scrollable */}
-            <div className="flex-1 overflow-auto p-4 ubuntu-scrollbar">
+            <div 
+                className="flex-1 overflow-auto p-4 ubuntu-scrollbar"
+                style={{
+                    transform: 'translateZ(0)',
+                    willChange: 'scroll-position',
+                    WebkitOverflowScrolling: 'touch',
+                    overscrollBehavior: 'contain'
+                }}
+            >
               <div className="space-y-4">
                 {/* Description */}
                 <div className="ubuntu-card">

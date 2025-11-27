@@ -31,61 +31,38 @@ const ContactApp = ({ onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copiedField, setCopiedField] = useState("");
-
-  const contactInfo = [
-    {
-      id: 1,
-      icon: Mail,
-      label: "Email",
-      value: "momina7863@gmail.com",
-      link: "mailto:momina7863@gmail.com",
-      color: "from-red-500 to-pink-500",
-      description: "Best way to reach me for business inquiries"
-    },
-    {
-      id: 2,
-      icon: Phone,
-      label: "Phone",
-      value: "(+92) 319 424 3124",
-      link: "tel:+923194243124",
-      color: "from-green-500 to-emerald-500",
-      description: "Available for calls during business hours"
-    },
-    {
-      id: 3,
-      icon: Github,
-      label: "GitHub",
-      value: "github.com/Momin-786",
-      link: "https://github.com/Momin-786",
-      color: "from-gray-600 to-gray-800",
-      description: "Check out my open source projects"
-    },
-    {
-      id: 4,
-      icon: Linkedin,
-      label: "LinkedIn",
-      value: "/in/abdul-momin7863/",
-      link: "https://linkedin.com/in/abdul-momin7863/",
-      color: "from-blue-600 to-blue-800",
-      description: "Professional network and experience"
-    },
-    {
-      id: 5,
-      icon: MapPin,
-      label: "Location",
-      value: "Gujranwala, Punjab, PK",
-      link: null,
-      color: "from-orange-500 to-red-500",
-      description: "Available for remote work globally"
-    }
-  ];
-
-
-  const availability = {
+  const [contactInfo, setContactInfo] = useState([]);
+  const [availability, setAvailability] = useState({
     status: "Available for new projects",
     nextAvailable: "Immediate start",
     timezone: "PKT (UTC+5)",
     workingHours: "Flexible"
+  });
+
+  // Fetch contact info from API
+  useEffect(() => {
+    fetchContactData();
+  }, []);
+
+  const fetchContactData = async () => {
+    try {
+      const response = await fetch('/api/about');
+      const data = await response.json();
+      if (data.success && data.data) {
+        // Filter contact type data
+        const contactData = data.data.filter(item => item.type === 'contact');
+        setContactInfo(contactData);
+        
+        // Get availability from about data if available
+        const availabilityData = data.data.find(item => item.type === 'availability');
+        if (availabilityData) {
+          setAvailability(availabilityData);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching contact data:', error);
+      setContactInfo([]);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -148,30 +125,48 @@ const ContactApp = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar">
+        <div 
+            className="flex-1 overflow-auto bg-[#1E1E1E] ubuntu-scrollbar"
+            style={{
+                transform: 'translateZ(0)',
+                willChange: 'scroll-position',
+                WebkitOverflowScrolling: 'touch',
+                overscrollBehavior: 'contain'
+            }}
+        >
           <div className="p-4 space-y-4">
             
             {/* Availability Status - Ubuntu style */}
-            <div className="ubuntu-card p-3 border-[#4CAF50]/30">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-2 h-2 bg-[#4CAF50] rounded-full" />
-                <h2 className="text-[#4CAF50] text-sm font-medium" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.status}</h2>
+            {availability && (
+              <div className="ubuntu-card p-3 border-[#4CAF50]/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-[#4CAF50] rounded-full" />
+                  <h2 className="text-[#4CAF50] text-sm font-medium" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                    {availability.status || "Available for new projects"}
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Next Available</div>
+                    <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                      {availability.nextAvailable || "Immediate start"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Timezone</div>
+                    <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                      {availability.timezone || "PKT (UTC+5)"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Working Hours</div>
+                    <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                      {availability.workingHours || "Flexible"}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div>
-                  <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Next Available</div>
-                  <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.nextAvailable}</div>
-                </div>
-                <div>
-                  <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Timezone</div>
-                  <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.timezone}</div>
-                </div>
-                <div>
-                  <div className="text-[#808080] mb-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Working Hours</div>
-                  <div className="text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{availability.workingHours}</div>
-                </div>
-              </div>
-            </div>
+            )}
 
            
 
@@ -182,11 +177,15 @@ const ContactApp = ({ onClose }) => {
               <div className="space-y-3">
                 <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Contact Information</h2>
                 
-                {contactInfo.map((contact) => {
-                  const IconComponent = contact.icon;
+                {contactInfo.length > 0 ? contactInfo.map((contact, index) => {
+                  const iconMap = { Mail, Phone, Github, Linkedin, MapPin };
+                  const IconComponent = typeof contact.icon === 'string' 
+                    ? iconMap[contact.icon] || Mail 
+                    : (contact.icon || Mail);
+
                   return (
                     <div
-                      key={contact.id}
+                      key={contact.id || contact._id || index}
                       className="ubuntu-list-item group"
                     >
                       <div className="w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
@@ -195,11 +194,13 @@ const ContactApp = ({ onClose }) => {
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <h3 className="text-sm font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{contact.label}</h3>
+                          <h3 className="text-sm font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                            {contact.label || contact.name}
+                          </h3>
                           <div className="flex gap-1">
-                            {contact.link && (
+                            {(contact.link || contact.href) && (
                               <a
-                                href={contact.link}
+                                href={contact.link || contact.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-1 hover:bg-[#3A3A3A] rounded opacity-0 group-hover:opacity-100 transition-opacity"
@@ -208,10 +209,10 @@ const ContactApp = ({ onClose }) => {
                               </a>
                             )}
                             <button
-                              onClick={() => copyToClipboard(contact.value, contact.id)}
+                              onClick={() => copyToClipboard(contact.value || contact.content || "", contact.id || contact._id || index)}
                               className="p-1 hover:bg-[#3A3A3A] rounded opacity-0 group-hover:opacity-100 transition-opacity"
                             >
-                              {copiedField === contact.id ? (
+                              {copiedField === (contact.id || contact._id || index) ? (
                                 <CheckCircle className="w-3 h-3 text-[#4CAF50]" />
                               ) : (
                                 <Copy className="w-3 h-3 text-[#B3B3B3]" />
@@ -219,12 +220,22 @@ const ContactApp = ({ onClose }) => {
                             </button>
                           </div>
                         </div>
-                        <p className="text-[#B3B3B3] text-xs break-all" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{contact.value}</p>
-                        <p className="text-[#808080] text-xs mt-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{contact.description}</p>
+                        <p className="text-[#B3B3B3] text-xs break-all" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                          {contact.value || contact.content || ""}
+                        </p>
+                        {(contact.description || contact.desc) && (
+                          <p className="text-[#808080] text-xs mt-1" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+                            {contact.description || contact.desc}
+                          </p>
+                        )}
                       </div>
                     </div>
                   );
-                })}
+                }) : (
+                  <div className="text-center py-10">
+                    <p className="text-[#808080]" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>No contact information available</p>
+                  </div>
+                )}
               </div>
 
               {/* Contact Form - Ubuntu style */}

@@ -234,19 +234,42 @@
   will-change: transform, opacity;
 }
 
-/* Ubuntu Scrollbar */
+/* Ubuntu Scrollbar - Optimized for Performance */
+.ubuntu-scrollbar {
+  /* GPU acceleration for smooth scrolling */
+  transform: translateZ(0);
+  will-change: scroll-position;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  /* Use auto instead of smooth for better performance */
+  scroll-behavior: auto;
+  /* Optimize scrolling performance - prevent layout thrashing */
+  contain: layout style paint;
+  /* Reduce repaints during scroll */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
 .ubuntu-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
+  /* GPU acceleration for scrollbar */
+  -webkit-transform: translateZ(0);
 }
 
 .ubuntu-scrollbar::-webkit-scrollbar-track {
   background: var(--ubuntu-bg-primary);
+  /* Optimize track rendering */
+  -webkit-transform: translateZ(0);
 }
 
 .ubuntu-scrollbar::-webkit-scrollbar-thumb {
   background: var(--ubuntu-border);
   border-radius: 4px;
+  /* GPU acceleration for thumb */
+  -webkit-transform: translateZ(0);
+  /* Smooth thumb rendering */
+  transition: background-color 0.15s ease;
 }
 
 .ubuntu-scrollbar::-webkit-scrollbar-thumb:hover {
