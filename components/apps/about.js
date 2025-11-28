@@ -183,9 +183,23 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
       <div className="ubuntu-card p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#2D2D2D] border border-[#3D3D3D] rounded flex items-center justify-center">
-              <User className="w-6 h-6 text-[#E95420]" />
-            </div>
+            {overview?.imageUrl ? (
+              <div className="w-12 h-12 bg-[#2D2D2D] border border-[#3D3D3D] rounded overflow-hidden flex items-center justify-center">
+                <img 
+                  src={overview.imageUrl} 
+                  alt={overview.name || overview.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = '<div class="w-12 h-12 bg-[#2D2D2D] border border-[#3D3D3D] rounded flex items-center justify-center"><svg class="w-6 h-6 text-[#E95420]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>';
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="w-12 h-12 bg-[#2D2D2D] border border-[#3D3D3D] rounded flex items-center justify-center">
+                <User className="w-6 h-6 text-[#E95420]" />
+              </div>
+            )}
             <div>
               <h2 className="text-base font-medium text-white" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
                 {overview?.name || overview?.title || "Abdul Momin"}
@@ -198,13 +212,36 @@ const AboutApp = ({ onClose, aboutData: propsAboutData = [] }) => {
           
           {/* Download Resume Button */}
           <button
-            onClick={() => {
-              const link = document.createElement('a');
-              link.href = '/resume.pdf';
-              link.download = 'Abdul_Momin_Resume.pdf';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
+            onClick={async () => {
+              try {
+                const res = await fetch('/api/about/resume');
+                const data = await res.json();
+                if (data.success && data.data) {
+                  const link = document.createElement('a');
+                  link.href = data.data.path || '/resumes/resume.pdf';
+                  link.download = data.data.filename || 'Resume.pdf';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                } else {
+                  // Fallback to public resume
+                  const link = document.createElement('a');
+                  link.href = '/resumes/resume.pdf';
+                  link.download = 'Resume.pdf';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }
+              } catch (error) {
+                console.error('Error fetching resume:', error);
+                // Fallback
+                const link = document.createElement('a');
+                link.href = '/resumes/resume.pdf';
+                link.download = 'Resume.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
             }}
             className="ubuntu-button primary flex items-center gap-2 text-xs"
             style={{ padding: '6px 12px' }}

@@ -57,12 +57,21 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
 
   // All data comes from MongoDB - no hardcoded fallback
 
+  // Helper function to check if project has category (handles both string and array)
+  const hasCategory = (project, category) => {
+    if (!project.category) return false;
+    if (Array.isArray(project.category)) {
+      return project.category.includes(category);
+    }
+    return project.category === category;
+  };
+
   const categories = [
     { id: "all", name: "All", count: projects.length },
-    { id: "web", name: "Web", count: projects.filter(p => p.category === "web").length },
-    { id: "mobile", name: "Mobile", count: projects.filter(p => p.category === "mobile").length },
-    { id: "ai", name: "AI/ML", count: projects.filter(p => p.category === "ai").length },
-    { id: "saas", name: "SaaS", count: projects.filter(p => p.category === "saas").length }
+    { id: "web", name: "Web", count: projects.filter(p => hasCategory(p, "web")).length },
+    { id: "mobile", name: "Mobile", count: projects.filter(p => hasCategory(p, "mobile")).length },
+    { id: "ai", name: "AI/ML", count: projects.filter(p => hasCategory(p, "ai")).length },
+    { id: "saas", name: "SaaS", count: projects.filter(p => hasCategory(p, "saas")).length }
   ];
 
   // Map icon names to components
@@ -72,8 +81,8 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         project.tech.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = filterCategory === "all" || project.category === filterCategory;
+                         (Array.isArray(project.tech) && project.tech.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase())));
+    const matchesCategory = filterCategory === "all" || hasCategory(project, filterCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -302,12 +311,16 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
                   <div className="ubuntu-card">
                     <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Key Features</h2>
                     <div className="space-y-2">
-                      {selectedProject.features.map((feature, index) => (
-                        <div key={index} className="flex items-start space-x-2">
-                          <CheckCircle className="w-3 h-3 text-[#4CAF50] flex-shrink-0 mt-0.5" />
-                          <span className="text-[#B3B3B3] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{feature}</span>
-                        </div>
-                      ))}
+                      {selectedProject.features && Array.isArray(selectedProject.features) && selectedProject.features.length > 0 ? (
+                        selectedProject.features.map((feature, index) => (
+                          <div key={index} className="flex items-start space-x-2">
+                            <CheckCircle className="w-3 h-3 text-[#4CAF50] flex-shrink-0 mt-0.5" />
+                            <span className="text-[#B3B3B3] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{feature}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <span className="text-[#808080] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>No features listed</span>
+                      )}
                     </div>
                   </div>
 
@@ -317,12 +330,16 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
                     <div className="ubuntu-card">
                       <h3 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Tech Stack</h3>
                       <div className="space-y-1.5">
-                        {selectedProject.tech.map(tech => (
-                          <div key={tech} className="flex items-center space-x-2">
-                            <div className="w-1.5 h-1.5 bg-[#E95420] rounded-full" />
-                            <span className="text-[#B3B3B3] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{tech}</span>
-                          </div>
-                        ))}
+                        {selectedProject.tech && Array.isArray(selectedProject.tech) && selectedProject.tech.length > 0 ? (
+                          selectedProject.tech.map(tech => (
+                            <div key={tech} className="flex items-center space-x-2">
+                              <div className="w-1.5 h-1.5 bg-[#E95420] rounded-full" />
+                              <span className="text-[#B3B3B3] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>{tech}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-[#808080] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>No tech stack listed</span>
+                        )}
                       </div>
                     </div>
 
@@ -330,22 +347,29 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
                     <div className="ubuntu-card">
                       <h3 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Links</h3>
                       <div className="space-y-2">
-                        <button 
-                          onClick={() => handleLinkClick(selectedProject.demoUrl, 'Demo')}
-                          className="ubuntu-button primary w-full flex items-center justify-center space-x-2 text-sm"
-                        >
-                          <Play className="w-3 h-3" />
-                          <span>Live Demo</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </button>
-                        <button 
-                          onClick={() => handleLinkClick(selectedProject.githubUrl, 'GitHub Repository')}
-                          className="ubuntu-button w-full flex items-center justify-center space-x-2 text-sm"
-                        >
-                          <Github className="w-3 h-3" />
-                          <span>Source Code</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </button>
+                        {(selectedProject.demoUrl || selectedProject.liveUrl) && (
+                          <button 
+                            onClick={() => handleLinkClick(selectedProject.demoUrl || selectedProject.liveUrl, 'Demo')}
+                            className="ubuntu-button primary w-full flex items-center justify-center space-x-2 text-sm"
+                          >
+                            <Play className="w-3 h-3" />
+                            <span>Live Demo</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </button>
+                        )}
+                        {selectedProject.githubUrl && (
+                          <button 
+                            onClick={() => handleLinkClick(selectedProject.githubUrl, 'GitHub Repository')}
+                            className="ubuntu-button w-full flex items-center justify-center space-x-2 text-sm"
+                          >
+                            <Github className="w-3 h-3" />
+                            <span>Source Code</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </button>
+                        )}
+                        {!selectedProject.demoUrl && !selectedProject.liveUrl && !selectedProject.githubUrl && (
+                          <span className="text-[#808080] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>No links available</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -356,15 +380,19 @@ const ProjectsApp = ({ onClose, projectsData = [] }) => {
                   <div className="ubuntu-card">
                     <h2 className="text-sm font-medium text-white mb-3" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>Target Industries</h2>
                     <div className="flex flex-wrap gap-2">
-                      {selectedProject.industries.map(industry => (
-                        <span
-                          key={industry}
-                          className="px-2 py-1 bg-[#2D2D2D] text-[#B3B3B3] border border-[#3D3D3D] text-xs"
-                          style={{ fontFamily: "'Ubuntu Mono', monospace" }}
-                        >
-                          {industry}
-                        </span>
-                      ))}
+                      {selectedProject.industries && Array.isArray(selectedProject.industries) && selectedProject.industries.length > 0 ? (
+                        selectedProject.industries.map(industry => (
+                          <span
+                            key={industry}
+                            className="px-2 py-1 bg-[#2D2D2D] text-[#B3B3B3] border border-[#3D3D3D] text-xs"
+                            style={{ fontFamily: "'Ubuntu Mono', monospace" }}
+                          >
+                            {industry}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[#808080] text-xs" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>No industries listed</span>
+                      )}
                     </div>
                   </div>
                 )}
